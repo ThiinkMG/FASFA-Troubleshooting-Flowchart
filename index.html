@@ -1,0 +1,3879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAFSA Corrections Troubleshooting Flowchart - My College Finance</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    /* ========================================
+       ENHANCED CSS VARIABLES SYSTEM (NEW)
+       Complete theming with MCF brand colors
+       ======================================== */
+    :root {
+      /* ========================================
+         MCF BRAND COLORS (Light Mode)
+         ======================================== */
+      --mcf-primary-color: #012699;      /* Brand blue */
+      --mcf-secondary-color: #26e011;    /* Brand green */
+      --mcf-accent-color: #fdc003;       /* Brand amber */
+
+      /* Text colors */
+      --mcf-text-color: #09090b;         /* Primary text */
+      --mcf-text-muted: #64748b;         /* Secondary text */
+
+      /* Background colors */
+      --mcf-bg-color: #fafafa;           /* Page background */
+      --mcf-card-bg: #ffffff;            /* Card background */
+      --mcf-card-hover-bg: #f8fafc;      /* Card hover state */
+
+      /* Border colors */
+      --mcf-border-color: #e2e8f0;       /* Default borders */
+      --mcf-border-focus: #336bff;       /* Focus state */
+
+      /* Legacy variables for compatibility */
+      --mcf-background: var(--mcf-bg-color);
+      --mcf-foreground: var(--mcf-text-color);
+      --mcf-card: var(--mcf-card-bg);
+      --mcf-card-foreground: var(--mcf-text-color);
+      --mcf-primary: var(--mcf-border-focus);
+      --mcf-secondary: #f1f5f9;
+      --mcf-secondary-foreground: var(--mcf-text-muted);
+      --mcf-muted: #f1f5f9;
+      --mcf-muted-foreground: var(--mcf-text-muted);
+      --mcf-destructive: #ef4444;
+      --mcf-border: var(--mcf-border-color);
+      --mcf-input: var(--mcf-border-color);
+      --mcf-radius: 0.5rem;
+      --mcf-transition: all 0.3s ease;
+
+      /* Flowchart specific */
+      --mcf-info-node: #3b82f6;
+      --mcf-action-node: var(--mcf-secondary-color);
+      --mcf-warning-node: #ef4444;
+      --mcf-decision-node: #8b5cf6;
+
+      /* ========================================
+         TOUCH TARGETS & SPACING
+         ======================================== */
+      --touch-target-min: 44px;          /* WCAG minimum */
+      --touch-target-recommended: 48px;   /* Material Design */
+      --spacing-xs: 0.5rem;              /* 8px */
+      --spacing-sm: 0.75rem;             /* 12px */
+      --spacing-md: 1rem;                /* 16px */
+      --spacing-lg: 1.5rem;              /* 24px */
+      --spacing-xl: 2rem;                /* 32px */
+      --spacing-xxl: 3rem;               /* 48px */
+
+      /* ========================================
+         TYPOGRAPHY SCALE
+         ======================================== */
+      --font-base: 16px;                 /* Body text minimum */
+      --font-sm: 0.875rem;               /* 14px - minimum helper text */
+      --font-md: 0.9375rem;              /* 15px - comfortable helper text */
+      --font-lg: 1.125rem;               /* 18px - prominent text */
+      --font-xl: 1.25rem;                /* 20px - subheadings */
+      --font-xxl: 1.5rem;                /* 24px - headings */
+
+      /* Line heights */
+      --line-height-tight: 1.2;          /* Headings */
+      --line-height-normal: 1.5;         /* UI elements */
+      --line-height-relaxed: 1.7;        /* Body text */
+
+      /* ========================================
+         RESPONSIVE CONTAINER PADDING
+         ======================================== */
+      --container-padding-mobile: 1rem;      /* 320px - 576px */
+      --container-padding-tablet: 1.5rem;    /* 576px - 992px */
+      --container-padding-desktop: 2rem;     /* 992px+ */
+    }
+
+    /* ========================================
+       DARK MODE OVERRIDES (NEW)
+       Complete color variable overrides
+       ======================================== */
+    body.dark-mode {
+      /* Brand colors adjusted for dark mode */
+      --mcf-primary-color: #0139cc;
+      --mcf-secondary-color: #3ae826;
+      --mcf-accent-color: #fdc922;
+
+      /* Text colors inverted */
+      --mcf-text-color: #f8fafc;
+      --mcf-text-muted: #94a3b8;
+
+      /* Background colors */
+      --mcf-bg-color: #09090b;
+      --mcf-card-bg: #1a1a1f;
+      --mcf-card-hover-bg: #27272a;
+
+      /* Border colors */
+      --mcf-border-color: #374151;
+      --mcf-border-focus: #4c6ef5;
+
+      /* Legacy variables for compatibility */
+      --mcf-background: var(--mcf-bg-color);
+      --mcf-foreground: var(--mcf-text-color);
+      --mcf-card: var(--mcf-card-bg);
+      --mcf-card-foreground: var(--mcf-text-color);
+      --mcf-primary: var(--mcf-border-focus);
+      --mcf-secondary: #374151;
+      --mcf-secondary-foreground: var(--mcf-text-color);
+      --mcf-muted: #1c1917;
+      --mcf-muted-foreground: var(--mcf-text-muted);
+      --mcf-destructive: #991b1b;
+      --mcf-border: var(--mcf-border-color);
+      --mcf-input: #1f2937;
+    }
+
+    /* ========================================
+       MOBILE-FIRST BASE STYLES
+       ======================================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent; /* Remove iOS tap highlight */
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+                   'Helvetica Neue', Arial, sans-serif;
+      font-size: var(--font-base); /* 16px mobile base */
+      line-height: var(--line-height-relaxed); /* 1.7 */
+      color: var(--mcf-foreground);
+      background-color: var(--mcf-background);
+      transition: background-color 0.3s ease, color 0.3s ease;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Single breakpoint for body text scale-up (NEW) */
+    @media (min-width: 768px) {
+      body {
+        font-size: 18px; /* Desktop scale-up for comfort */
+      }
+    }
+
+    /* Prevent text overflow and ensure word wrapping */
+    p, li, td, span, div {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
+    }
+
+    /* ========================================
+       CRITICAL FIX: DISABLE HYPHENATION ON HEADINGS
+       Prevents "deter-mine" style breaks in titles
+       ======================================== */
+    h1, h2, h3, h4, h5, h6,
+    .page-title,
+    .page-title h1,
+    .page-subtitle,
+    .step-content h2,
+    .step-content h3,
+    .step-content p {
+      hyphens: none !important;
+      -webkit-hyphens: none !important;
+      -ms-hyphens: none !important;
+    }
+
+    /* Ensure all images are responsive */
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* ========================================
+       HEADER SIZING FIXES - DESKTOP & MOBILE
+       ======================================== */
+    /* ========================================
+       SMART STICKY HEADER (NEW)
+       Hide on scroll down, show on scroll up
+       ======================================== */
+    .mcf-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 80px; /* Up from 64px */
+      background-color: rgba(250, 250, 250, 0.95);
+      border-bottom: 1px solid var(--mcf-border);
+      backdrop-filter: blur(10px);
+      transition: transform 0.3s ease, var(--mcf-transition);
+    }
+
+    /* Hide header on scroll down - controlled by JavaScript */
+    .mcf-header.header-hidden {
+      transform: translateY(-100%);
+    }
+
+    .dark-mode .mcf-header {
+      background-color: rgba(9, 9, 11, 0.95);
+    }
+
+    .mcf-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    .mcf-header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 80px; /* Up from 64px */
+      gap: 1rem;
+    }
+
+    .mcf-header-brand {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .mcf-logo-header {
+      width: 70px; /* Up from 60px */
+      height: 70px;
+      object-fit: contain;
+    }
+
+    .mcf-brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mcf-brand-name {
+      font-size: 1.5rem; /* Up from 1.25rem - 24px */
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--mcf-primary-color);
+      line-height: 1.2;
+    }
+
+    .mcf-tagline {
+      font-size: 0.75rem; /* Up from 0.625rem - 12px */
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--mcf-muted-foreground);
+    }
+
+    .mcf-theme-toggle {
+      width: 52px; /* Up from 48px */
+      height: 52px;
+      padding: 0;
+      border: 2px solid var(--mcf-border);
+      background: var(--mcf-card);
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--mcf-transition);
+      color: var(--mcf-foreground);
+      touch-action: manipulation;
+    }
+
+    .mcf-theme-toggle svg {
+      width: 24px; /* Up from 20px */
+      height: 24px;
+    }
+
+    .mcf-theme-toggle:hover {
+      border-color: var(--mcf-primary);
+      transform: scale(1.1);
+    }
+
+    .mcf-theme-toggle:focus-visible {
+      outline: 3px solid var(--mcf-primary);
+      outline-offset: 2px;
+    }
+
+    /* ========================================
+       SAVED RESULTS BANNER - REMOVED
+       Banner was blocking content, now using Welcome Back screen only
+       ======================================== */
+
+    /* Main Content */
+    .main-content {
+      padding: 2rem 0 4rem;
+      min-height: calc(100vh - 200px);
+    }
+
+    .page-title {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    /* ========================================
+       SIMPLIFIED TYPOGRAPHY with clamp() (NEW)
+       Fluid scaling from mobile to desktop
+       ======================================== */
+
+    /* H1 - Main page titles */
+    h1, .page-title h1 {
+      font-size: clamp(1.75rem, 5vw + 1rem, 2.75rem);
+      /* Mobile: 28px → Desktop: 44px */
+      line-height: var(--line-height-tight); /* 1.2 */
+      font-weight: 900;
+      color: var(--mcf-primary-color);
+      margin-bottom: 0.5rem;
+    }
+
+    /* H2 - Section headings */
+    h2 {
+      font-size: clamp(1.5rem, 4vw + 0.5rem, 2rem);
+      /* Mobile: 24px → Desktop: 32px */
+      line-height: var(--line-height-tight);
+      font-weight: 700;
+    }
+
+    /* H3 - Subsection headings */
+    h3 {
+      font-size: clamp(1.25rem, 3vw + 0.5rem, 1.75rem);
+      /* Mobile: 20px → Desktop: 28px */
+      line-height: var(--line-height-normal); /* 1.5 */
+      font-weight: 600;
+    }
+
+    /* H4 - Minor headings */
+    h4 {
+      font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+      /* Mobile: 18px → Desktop: 24px */
+      line-height: var(--line-height-normal);
+      font-weight: 600;
+    }
+
+    /* Page subtitle - Responsive with single breakpoint */
+    .page-subtitle {
+      font-size: 1rem; /* 16px mobile */
+      color: var(--mcf-text-muted);
+      max-width: 800px;
+      margin: 0 auto 2rem;
+      text-align: center;
+      line-height: var(--line-height-normal);
+    }
+
+    @media (min-width: 768px) {
+      .page-subtitle {
+        font-size: 1.25rem; /* 20px desktop */
+      }
+    }
+
+    /* Flowchart Container */
+    .flowchart-container {
+      max-width: 700px;
+      margin: 2rem auto;
+    }
+
+    /* Flowchart Step Card */
+    .flowchart-step {
+      background: var(--mcf-card);
+      border: 2px solid var(--mcf-border);
+      border-radius: calc(var(--mcf-radius) * 1.5);
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      transition: var(--mcf-transition);
+      display: none;
+    }
+
+    .flowchart-step.active {
+      display: block;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .step-icon {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--mcf-primary-color), var(--mcf-border-focus));
+      color: white;
+    }
+
+    .decision-icon {
+      background: var(--mcf-decision-node);
+    }
+
+    .action-icon {
+      background: var(--mcf-action-node);
+    }
+
+    .step-content {
+      text-align: center;
+    }
+
+    /* ========================================
+       CARD CONTENT STYLES
+       Now using global responsive typography
+       ======================================== */
+    .step-content h2 {
+      margin-bottom: 1rem;
+      color: var(--mcf-foreground);
+    }
+
+    .step-content h3 {
+      margin-bottom: 0.75rem;
+      color: var(--mcf-foreground);
+    }
+
+    .step-content p {
+      font-size: 1rem; /* Base size, scales with body */
+      line-height: var(--line-height-relaxed);
+      color: var(--mcf-foreground);
+      margin-bottom: 1.5rem;
+    }
+
+    @media (min-width: 768px) {
+      .step-content p {
+        font-size: 1.125rem; /* 18px on desktop */
+      }
+    }
+
+    /* ========================================
+       BUTTON SIZING - DESKTOP
+       ======================================== */
+    .step-actions {
+      display: flex;
+      gap: var(--spacing-md); /* 8-12px spacing between touch targets */
+      justify-content: center;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      flex: 1;
+      max-width: 200px;
+      min-height: 52px; /* Up from 48px */
+      min-width: 52px;
+      padding: 1rem 1.75rem; /* Up from 0.875rem 1.5rem */
+      border-radius: var(--mcf-radius);
+      border: 2px solid transparent;
+      font-size: 1.125rem; /* Up from 1rem - 18px */
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      touch-action: manipulation;
+    }
+
+    /* Focus indicators for accessibility */
+    .action-btn:focus-visible {
+      outline: 3px solid var(--mcf-primary);
+      outline-offset: 2px;
+    }
+
+    /* Default button states - both start white/neutral */
+    .btn-yes,
+    .btn-no {
+      background: white;
+      color: var(--mcf-foreground);
+      border-color: var(--mcf-border);
+    }
+
+    .dark-mode .btn-yes,
+    .dark-mode .btn-no {
+      background: var(--mcf-card);
+      color: var(--mcf-foreground);
+      border-color: var(--mcf-border);
+    }
+
+    /* Hover state - both buttons show green on hover */
+    .btn-yes:hover:not(.selected):not(.unselected),
+    .btn-no:hover:not(.selected):not(.unselected) {
+      background: var(--mcf-secondary-color);
+      color: white;
+      border-color: var(--mcf-secondary-color);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(38, 224, 17, 0.3);
+    }
+
+    /* Selected state (when user clicks) - stays green */
+    .action-btn.selected {
+      background: var(--mcf-secondary-color);
+      color: white;
+      border-color: var(--mcf-secondary-color);
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(38, 224, 17, 0.4);
+    }
+
+    .action-btn.selected:hover {
+      background: #16a34a;
+      box-shadow: 0 5px 15px rgba(38, 224, 17, 0.4);
+    }
+
+    /* Unselected state - reverts to white (not grey) */
+    .action-btn.unselected {
+      background: white;
+      color: var(--mcf-foreground);
+      border-color: var(--mcf-border);
+      opacity: 0.7;
+    }
+
+    .dark-mode .action-btn.unselected {
+      background: var(--mcf-card);
+      color: var(--mcf-foreground);
+      border-color: var(--mcf-border);
+    }
+
+    .action-btn.unselected:hover {
+      opacity: 1;
+      transform: translateY(-1px);
+    }
+
+    .btn-next {
+      background: var(--mcf-primary);
+      color: white;
+      max-width: 100%;
+    }
+
+    .btn-next:hover {
+      background: var(--mcf-primary-color);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(1, 38, 153, 0.3);
+    }
+
+    .btn-start {
+      background: linear-gradient(135deg, var(--mcf-primary-color), var(--mcf-border-focus));
+      color: white;
+      font-size: 1.25rem; /* Up from 1.125rem - 20px */
+      padding: 1.125rem 2rem; /* Increased padding */
+      min-height: 56px; /* Larger than regular buttons */
+      max-width: 100%;
+      box-shadow: 0 8px 25px rgba(1, 38, 153, 0.3);
+    }
+
+    .btn-start:hover {
+      background: linear-gradient(135deg, var(--mcf-primary-color), #1e40af);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(1, 38, 153, 0.4);
+    }
+
+    /* ========================================
+       HELPER TEXT CORRECTION - 15px MINIMUM (NEW)
+       ======================================== */
+    .help-text {
+      background: var(--mcf-secondary);
+      border-left: 4px solid var(--mcf-primary-color);
+      padding: 1rem;
+      border-radius: var(--mcf-radius);
+      margin-top: 1rem;
+      text-align: left;
+    }
+
+    .help-text h4 {
+      font-size: var(--font-md) !important; /* 15px - comfortable reading */
+      font-weight: 600;
+      color: var(--mcf-primary-color);
+      margin-bottom: 0.5rem;
+      line-height: var(--line-height-normal);
+    }
+
+    .help-text ul {
+      margin-left: 1.25rem;
+      font-size: var(--font-md) !important; /* 15px - comfortable reading */
+      color: var(--mcf-foreground);
+      line-height: var(--line-height-normal);
+    }
+
+    .help-text li {
+      margin-bottom: 0.5rem;
+      font-size: var(--font-md) !important; /* 15px */
+      line-height: var(--line-height-normal);
+    }
+
+    .help-text p {
+      font-size: var(--font-md) !important; /* 15px */
+      line-height: var(--line-height-normal);
+    }
+
+    /* Apply to all helper text elements globally */
+    .mcf-helper-text,
+    small {
+      font-size: var(--font-md) !important; /* 15px minimum everywhere */
+      line-height: var(--line-height-normal);
+    }
+
+    /* Reset Button */
+    .reset-container {
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    .btn-reset {
+      background: var(--mcf-destructive);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      min-height: 48px; /* Touch target */
+      min-width: 48px;
+      border-radius: var(--mcf-radius);
+      border: none;
+      font-size: 0.9375rem; /* 15px */
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--mcf-transition);
+      touch-action: manipulation;
+    }
+
+    .btn-reset:hover {
+      background: #dc2626;
+      transform: translateY(-2px);
+    }
+
+    .btn-reset:focus-visible {
+      outline: 3px solid var(--mcf-destructive);
+      outline-offset: 2px;
+    }
+
+    /* ========================================
+       FOOTER SIZING FIXES - DESKTOP & MOBILE
+       ======================================== */
+    .mcf-footer {
+      background: linear-gradient(to bottom, #111827, #000000);
+      color: white;
+      padding: 3.5rem 0; /* Up from 3rem */
+      margin-top: 4rem;
+    }
+
+    .mcf-footer-content {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .mcf-logo {
+      width: 100px; /* Up from 80px */
+      height: 100px;
+      object-fit: contain;
+    }
+
+    .mcf-footer-title {
+      font-size: 1.75rem; /* Up from 1.5rem - 28px */
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      margin: 0;
+    }
+
+    .mcf-footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .mcf-footer-link {
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      font-size: 1rem; /* Up from 0.875rem - 16px */
+      transition: color 0.3s ease;
+      min-height: 44px; /* Touch target */
+      display: inline-flex;
+      align-items: center;
+      padding: 0.5rem;
+    }
+
+    .mcf-footer-link:hover {
+      color: var(--mcf-accent-color);
+      text-decoration: underline;
+    }
+
+    .mcf-footer-link:focus-visible {
+      outline: 3px solid var(--mcf-accent-color);
+      outline-offset: 2px;
+    }
+
+    .mcf-footer-separator {
+      color: rgba(255, 255, 255, 0.3);
+      font-size: 1rem; /* 16px */
+    }
+
+    .mcf-footer-tagline {
+      font-size: 1rem; /* Up from 0.875rem - 16px */
+      letter-spacing: 0.1em;
+      color: var(--mcf-accent-color);
+      font-weight: 500;
+      margin: 1rem 0;
+    }
+
+    .mcf-footer-copyright {
+      font-size: 0.875rem; /* Up from 0.75rem - 14px */
+      color: rgba(255, 255, 255, 0.5);
+      margin: 0;
+    }
+
+    /* ========================================
+       STANDARDIZED BREAKPOINT NAMES (NEW)
+       Using consistent naming convention
+       ======================================== */
+
+    /* XS (375px): Critical fixes for very small phones */
+    @media (max-width: 375px) {
+      /* ========================================
+         CRITICAL FIX: MINIMAL PADDING ON VERY SMALL SCREENS
+         Maximizes usable screen space
+         ======================================== */
+      .mcf-container {
+        padding: 0 0.75rem;
+      }
+
+      /* ========================================
+         375px RESPONSIVE ADJUSTMENTS
+         Handled by clamp() functions - no overrides needed
+         ======================================== */
+
+      /* ========================================
+         CRITICAL FIX: TIGHTER SPACING & REDUCED PADDING
+         Optimizes content for smallest screens
+         ======================================== */
+      .flowchart-step {
+        padding: 1rem;
+        margin-bottom: 1.25rem;
+      }
+
+      .step-content {
+        padding: 1rem;
+      }
+
+      /* Step icon smaller */
+      .step-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+        margin-bottom: 0.75rem;
+      }
+
+      /* Main content reduced padding */
+      .main-content {
+        padding: 1.5rem 0;
+      }
+
+      /* Score circle fixed sizing for very small screens */
+      .score-circle {
+        width: 80px;
+        height: 80px;
+        font-size: 1.5rem;
+      }
+
+      /* Score display stacks vertically */
+      .score-display {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .score-text {
+        text-align: center;
+      }
+
+      /* Single column layout for breakdown */
+      .score-breakdown {
+        grid-template-columns: 1fr;
+      }
+
+      /* Footer links stack vertically */
+      .mcf-footer-links {
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+
+      .mcf-footer-separator {
+        display: none;
+      }
+    }
+
+    /* SM (576px): 2-column grid, first layout change */
+    @media (max-width: 576px) {
+      /* Main content padding */
+      .main-content {
+        padding: 1.5rem 0 3rem;
+      }
+
+      /* Review and recommendation items more compact */
+      .review-item,
+      .recommendation-item {
+        padding: 0.75rem;
+      }
+
+      /* Footer logo smaller */
+      .mcf-logo {
+        width: 60px;
+        height: 60px;
+      }
+
+      /* Footer title smaller */
+      .mcf-footer-title {
+        font-size: 1.25rem;
+      }
+    }
+
+    /* MD (768px): Desktop header, horizontal nav - PRIMARY BREAKPOINT */
+    @media (max-width: 768px) {
+      /* ========================================
+         768px MOBILE SIZING
+         ======================================== */
+      /* Note: Body text handled by single breakpoint at 768px min-width */
+
+      /* Header optimizations */
+      .mcf-header {
+        height: 64px; /* Adequate mobile height */
+      }
+
+      .mcf-header-content {
+        height: 64px;
+      }
+
+      /* Logo smaller on mobile */
+      .mcf-logo-header {
+        width: 50px; /* Visible but not oversized */
+        height: 50px;
+      }
+
+      /* Theme toggle */
+      .mcf-theme-toggle {
+        width: 48px; /* Minimum touch target */
+        height: 48px;
+      }
+
+      .mcf-theme-toggle svg {
+        width: 22px;
+        height: 22px;
+      }
+
+      /* Hide brand text on mobile */
+      .mcf-brand-text {
+        display: none;
+      }
+
+      /* Typography handled by clamp() and responsive breakpoints */
+
+      /* Buttons */
+      .action-btn {
+        font-size: 1.0625rem; /* 17px */
+        padding: 0.9375rem 1.5rem;
+        min-height: 52px;
+      }
+
+      .btn-start {
+        font-size: 1.125rem; /* 18px */
+        padding: 1rem 1.75rem;
+        min-height: 54px;
+      }
+
+      /* Footer sizing */
+      .mcf-footer {
+        padding: 2.5rem 0;
+      }
+
+      .mcf-logo {
+        width: 80px;
+        height: 80px;
+      }
+
+      .mcf-footer-title {
+        font-size: 1.5rem; /* 24px */
+      }
+
+      .mcf-footer-link {
+        font-size: 1rem; /* 16px - still readable */
+        padding: 0.625rem 0.75rem;
+      }
+
+      .mcf-footer-tagline {
+        font-size: 0.9375rem; /* 15px */
+      }
+
+      /* ========================================
+         CRITICAL FIX: FULL-WIDTH CONTAINERS ON MOBILE
+         Reduces excessive horizontal margins
+         ======================================== */
+      .mcf-container {
+        max-width: 100% !important;
+        padding: 0 1rem;
+      }
+
+      .flowchart-container {
+        max-width: 100% !important;
+        margin: 0;
+        padding: 1rem 0;
+      }
+
+      .page-header,
+      .main-content {
+        max-width: 100%;
+      }
+
+      /* ========================================
+         CRITICAL FIX: REDUCE CARD PADDING
+         Makes content less cramped on mobile
+         ======================================== */
+      .flowchart-step {
+        padding: 1.25rem;
+        margin-bottom: 1.5rem; /* Tighter spacing between steps */
+      }
+
+      .step-content {
+        padding: 1.25rem;
+      }
+
+      /* ========================================
+         CRITICAL FIX: TIGHTEN VERTICAL SPACING
+         Removes excessive bottom blank areas
+         ======================================== */
+      .page-title {
+        margin-bottom: 1rem;
+      }
+
+      .page-subtitle {
+        margin-bottom: 1.5rem;
+      }
+
+      .main-content {
+        padding: 1.5rem 0 2rem; /* Reduced bottom padding */
+      }
+
+      /* Step actions stack vertically */
+      .step-actions {
+        flex-direction: column;
+        gap: var(--spacing-md);
+      }
+
+      /* Buttons full width on mobile */
+      .action-btn {
+        max-width: 100%;
+        width: 100%;
+        min-height: var(--touch-target-recommended);
+      }
+
+      /* Score display responsive */
+      .score-display {
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .score-text {
+        text-align: center;
+      }
+
+      /* Review items more compact */
+      .review-item,
+      .recommendation-item {
+        flex-direction: row;
+        padding: 1rem;
+      }
+
+      /* Footer adjustments */
+      .mcf-footer {
+        padding: 2rem 0;
+      }
+    }
+
+    /* Performance: Reduce animations on mobile */
+    @media (max-width: 768px) and (prefers-reduced-motion: no-preference) {
+      .flowchart-step {
+        animation-duration: 0.2s; /* Faster animations on mobile */
+      }
+
+      .action-btn {
+        transition: all 0.15s ease; /* Faster transitions */
+      }
+    }
+
+    /* ========================================
+       TABLET OPTIMIZATIONS (768px - 1024px)
+       Enhanced UX for iPad and tablet devices
+       ======================================== */
+
+    @media (min-width: 768px) and (max-width: 1024px) {
+      /* Enhanced touch targets for finger/stylus input */
+      .action-btn,
+      .mcf-btn {
+        min-height: 52px; /* Larger than mobile minimum */
+        min-width: 52px;
+        padding: 1rem 2rem;
+        font-size: 1.125rem; /* 18px - comfortable reading */
+      }
+
+      .btn-start {
+        min-height: 56px;
+        padding: 1.25rem 2.25rem;
+        font-size: 1.25rem; /* 20px */
+      }
+
+      .mcf-theme-toggle {
+        width: 52px;
+        height: 52px;
+      }
+
+      .mcf-theme-toggle svg {
+        width: 24px;
+        height: 24px;
+      }
+
+      /* Increased spacing for better visual hierarchy */
+      .flowchart-step {
+        padding: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .step-content {
+        padding: 2rem;
+      }
+
+      /* Optimized typography for tablet reading distance */
+      body {
+        font-size: 17px; /* Between mobile 16px and desktop 18px */
+      }
+
+      h1, .page-title h1 {
+        font-size: clamp(2rem, 4vw, 2.5rem); /* 32px - 40px */
+      }
+
+      h2 {
+        font-size: clamp(1.75rem, 3vw, 2rem); /* 28px - 32px */
+      }
+
+      h3 {
+        font-size: clamp(1.5rem, 2.5vw, 1.75rem); /* 24px - 28px */
+      }
+
+      .page-subtitle {
+        font-size: 1.125rem; /* 18px */
+      }
+
+      .step-content p {
+        font-size: 1.0625rem; /* 17px */
+      }
+
+      /* Wider containers for tablet screen real estate */
+      .mcf-container {
+        max-width: 90%; /* Use more screen space */
+        padding: 0 2rem;
+      }
+
+      .flowchart-container {
+        max-width: 85%;
+      }
+
+      /* Side-by-side buttons for horizontal space */
+      .step-actions {
+        flex-direction: row;
+        justify-content: space-evenly;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+      }
+
+      .action-btn {
+        flex: 1;
+        max-width: 280px; /* Wider than mobile, not full width */
+      }
+
+      /* Enhanced header for tablets */
+      .mcf-header {
+        height: 76px; /* Between mobile 64px and desktop 80px */
+      }
+
+      .mcf-header-content {
+        height: 76px;
+      }
+
+      .mcf-logo-header {
+        width: 64px;
+        height: 64px;
+      }
+
+      .mcf-brand-name {
+        font-size: 1.375rem; /* 22px */
+      }
+
+      .mcf-tagline {
+        font-size: 0.6875rem; /* 11px */
+      }
+
+      /* Show brand text on tablets */
+      .mcf-brand-text {
+        display: flex;
+      }
+
+      /* Footer optimization */
+      .mcf-footer {
+        padding: 3rem 0;
+      }
+
+      .mcf-logo {
+        width: 90px;
+        height: 90px;
+      }
+
+      .mcf-footer-title {
+        font-size: 1.625rem; /* 26px */
+      }
+
+      .mcf-footer-link {
+        font-size: 1rem;
+        padding: 0.625rem 1rem;
+      }
+
+      .mcf-footer-tagline {
+        font-size: 1rem;
+      }
+
+      /* Better list spacing for tablet readability */
+      ul, ol {
+        padding-left: 2rem;
+      }
+
+      li {
+        margin-bottom: 0.75rem;
+      }
+
+      /* Card hover states optimized for touch */
+      .flowchart-step:hover {
+        transform: scale(1.02);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      }
+
+      .review-item:hover {
+        transform: translateX(4px);
+      }
+
+      /* Score circles and visual elements */
+      .score-circle {
+        width: clamp(100px, 15vw, 140px);
+        height: clamp(100px, 15vw, 140px);
+        font-size: clamp(2rem, 5vw, 2.75rem);
+      }
+
+      /* Score display layout */
+      .score-display {
+        flex-direction: row;
+        gap: 2rem;
+      }
+
+      /* Score breakdown - 2 columns on tablets */
+      .score-breakdown {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+      }
+
+      /* Review and recommendation items */
+      .review-item,
+      .recommendation-item {
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+      }
+
+      /* Step icon sizing */
+      .step-icon {
+        width: 70px;
+        height: 70px;
+        font-size: 2.25rem;
+        margin-bottom: 1.25rem;
+      }
+
+      /* Help text spacing */
+      .help-text {
+        padding: 1.25rem;
+        margin-top: 1.25rem;
+      }
+
+      .help-text h4 {
+        font-size: 1rem; /* 16px */
+        margin-bottom: 0.75rem;
+      }
+
+      .help-text ul,
+      .help-text li,
+      .help-text p {
+        font-size: 0.9375rem; /* 15px */
+      }
+
+      /* Main content padding */
+      .main-content {
+        padding: 2.5rem 0 3.5rem;
+      }
+
+      /* Page title and subtitle */
+      .page-title {
+        margin-bottom: 1.25rem;
+      }
+
+      .page-subtitle {
+        margin-bottom: 2.5rem;
+      }
+
+      /* Readiness score */
+      .readiness-score {
+        padding: 2.5rem;
+        margin: 2.5rem 0;
+      }
+
+      .readiness-score h2 {
+        font-size: 2.25rem;
+        margin-bottom: 2.25rem;
+      }
+    }
+
+    /* ========================================
+       TABLET PORTRAIT (768px - 834px)
+       Optimized for iPad portrait orientation
+       ======================================== */
+
+    @media (min-width: 768px) and (max-width: 834px) and (orientation: portrait) {
+      /* Single column focus in portrait */
+      .flowchart-container {
+        max-width: 600px; /* Centered, focused layout */
+      }
+
+      /* Score breakdown stays 2-column */
+      .score-breakdown {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      /* Stack action buttons in portrait for easier thumb reach */
+      .step-actions {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .action-btn {
+        max-width: 100%;
+        width: 100%;
+      }
+
+      /* Full-width help text boxes */
+      .help-text {
+        margin-left: 0;
+        margin-right: 0;
+      }
+    }
+
+    /* ========================================
+       TABLET LANDSCAPE (834px - 1024px)
+       Optimized for iPad landscape orientation
+       ======================================== */
+
+    @media (min-width: 834px) and (max-width: 1024px) and (orientation: landscape) {
+      /* Wider layout for landscape */
+      .flowchart-container {
+        max-width: 750px;
+      }
+
+      /* Side-by-side buttons in landscape */
+      .step-actions {
+        flex-direction: row;
+        justify-content: center;
+        gap: 2rem;
+      }
+
+      .action-btn {
+        flex: 1;
+        max-width: 300px;
+      }
+
+      /* 2-column layout for score breakdown */
+      .score-breakdown {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+      }
+
+      /* 2-column layout for review items where appropriate */
+      .review-checklist {
+        padding: 2rem;
+      }
+
+      /* Recommendations stay single column for readability */
+      .recommendations {
+        padding: 2rem;
+      }
+
+      /* Larger header in landscape */
+      .mcf-header {
+        height: 80px;
+      }
+
+      .mcf-header-content {
+        height: 80px;
+      }
+
+      .mcf-logo-header {
+        width: 70px;
+        height: 70px;
+      }
+
+      /* Enhanced footer */
+      .mcf-footer {
+        padding: 3.5rem 0;
+      }
+
+      .mcf-logo {
+        width: 100px;
+        height: 100px;
+      }
+
+      .mcf-footer-title {
+        font-size: 1.75rem;
+      }
+    }
+
+    /* ========================================
+       iPad SPECIFIC OPTIMIZATIONS
+       Retina display and device-specific tweaks
+       ======================================== */
+
+    @media (min-width: 768px) and (max-width: 1024px) and (-webkit-min-device-pixel-ratio: 2) {
+      /* Retina display optimizations */
+      body {
+        -webkit-font-smoothing: subpixel-antialiased;
+        text-rendering: optimizeLegibility;
+      }
+
+      /* Sharper borders on retina */
+      .flowchart-step,
+      .review-item,
+      .recommendation-item {
+        border-width: 1px; /* Thinner borders look better on retina */
+      }
+
+      /* Optimized shadows for retina */
+      .flowchart-step {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      .flowchart-step:hover {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      }
+    }
+
+    /* ========================================
+       TOUCH OPTIMIZATION FOR TABLETS
+       Enhanced touch interactions
+       ======================================== */
+
+    @media (min-width: 768px) and (max-width: 1024px) and (pointer: coarse) {
+      /* Larger touch targets for finger input */
+      .action-btn {
+        min-height: 54px;
+        min-width: 54px;
+        padding: 1.125rem 2.125rem;
+      }
+
+      .mcf-theme-toggle {
+        min-height: 54px;
+        min-width: 54px;
+      }
+
+      .btn-reset {
+        min-height: 52px;
+        min-width: 52px;
+        padding: 1rem 1.75rem;
+      }
+
+      /* Larger tap areas for links */
+      .mcf-footer-link {
+        padding: 0.75rem 1.25rem;
+        min-height: 48px;
+      }
+
+      /* More spacing between interactive elements */
+      .step-actions {
+        gap: 1.75rem;
+      }
+
+      /* Enhanced hover states for touch */
+      .action-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 18px rgba(38, 224, 17, 0.35);
+      }
+
+      .review-item:hover {
+        transform: translateX(6px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+      }
+    }
+
+    /* Readiness Score */
+    .readiness-score {
+      background: var(--mcf-card);
+      border: 2px solid var(--mcf-border);
+      border-radius: calc(var(--mcf-radius) * 1.5);
+      padding: 2rem;
+      margin: 2rem 0;
+      text-align: center;
+    }
+
+    .readiness-score h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      color: var(--mcf-foreground);
+    }
+
+    .score-display {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    /* ========================================
+       RESPONSIVE SCORE CIRCLE
+       ======================================== */
+    .score-circle {
+      /* Responsive sizing using clamp */
+      width: clamp(80px, 20vw, 120px);
+      height: clamp(80px, 20vw, 120px);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(1.5rem, 4vw, 2.5rem); /* Responsive font */
+      font-weight: bold;
+      color: white;
+      position: relative;
+    }
+
+    .score-circle.excellent {
+      background: linear-gradient(135deg, #10b981, #059669);
+    }
+
+    .score-circle.good {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+    }
+
+    .score-circle.fair {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+    }
+
+    .score-circle.needs-work {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+    }
+
+    .score-text {
+      text-align: left;
+    }
+
+    .score-text h3 {
+      margin: 0;
+      font-size: clamp(1.25rem, 3.5vw, 1.75rem);
+      color: var(--mcf-foreground);
+      line-height: 1.3;
+    }
+
+    .score-text p {
+      margin: 0.5rem 0 0 0;
+      color: var(--mcf-muted-foreground);
+      font-size: clamp(0.875rem, 2vw, 1rem);
+      line-height: 1.5;
+    }
+
+    .score-breakdown {
+      display: grid;
+      /* Mobile-first: single column, then auto-responsive */
+      grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    .breakdown-item {
+      background: var(--mcf-background);
+      border: 1px solid var(--mcf-border);
+      border-radius: var(--mcf-radius);
+      padding: 1rem;
+      text-align: left;
+    }
+
+    .breakdown-item h4 {
+      margin: 0 0 0.75rem 0;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--mcf-foreground);
+    }
+
+    .score-bar {
+      height: 10px;
+      background: var(--mcf-muted);
+      border-radius: 5px;
+      overflow: hidden;
+      margin-bottom: 0.5rem;
+    }
+
+    .score-fill {
+      height: 100%;
+      transition: width 0.5s ease;
+      border-radius: 5px;
+    }
+
+    .score-fill.excellent {
+      background: linear-gradient(90deg, #10b981, #059669);
+    }
+
+    .score-fill.good {
+      background: linear-gradient(90deg, #3b82f6, #2563eb);
+    }
+
+    .score-fill.fair {
+      background: linear-gradient(90deg, #f59e0b, #d97706);
+    }
+
+    .score-fill.needs-work {
+      background: linear-gradient(90deg, #ef4444, #dc2626);
+    }
+
+    .score-value {
+      font-size: 0.9375rem; /* 15px */
+      color: var(--mcf-muted-foreground);
+      font-weight: 500;
+      line-height: 1.6;
+    }
+
+    /* Review Checklist */
+    .review-checklist {
+      background: var(--mcf-background);
+      border: 2px solid var(--mcf-border);
+      border-radius: var(--mcf-radius);
+      padding: 1.5rem;
+      margin: 2rem 0;
+      text-align: left;
+    }
+
+    .review-checklist h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--mcf-foreground);
+      text-align: center;
+    }
+
+    .review-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+      background: var(--mcf-card);
+      border: 1px solid var(--mcf-border);
+      border-radius: var(--mcf-radius);
+      transition: var(--mcf-transition);
+    }
+
+    .review-item:hover {
+      border-color: var(--mcf-primary);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .review-item-icon {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .review-item-content {
+      flex: 1;
+    }
+
+    .review-item-question {
+      font-weight: 600;
+      color: var(--mcf-foreground);
+      margin-bottom: 0.25rem;
+    }
+
+    .review-item-answer {
+      font-size: 0.9375rem; /* 15px */
+      color: var(--mcf-muted-foreground);
+      margin-bottom: 0.5rem;
+      line-height: 1.6;
+    }
+
+    .review-item-answer.yes {
+      color: #16a34a;
+      font-weight: 500;
+    }
+
+    .review-item-answer.no {
+      color: var(--mcf-primary-color);
+      font-weight: 500;
+    }
+
+    .review-item-feedback {
+      font-size: 0.9375rem; /* 15px */
+      color: var(--mcf-foreground);
+      background: var(--mcf-secondary);
+      padding: 0.5rem;
+      border-radius: calc(var(--mcf-radius) * 0.5);
+      margin-top: 0.5rem;
+      line-height: 1.6;
+    }
+
+    /* Recommendations */
+    .recommendations {
+      background: var(--mcf-background);
+      border: 2px solid var(--mcf-border);
+      border-radius: var(--mcf-radius);
+      padding: 1.5rem;
+      margin: 2rem 0;
+      text-align: left;
+    }
+
+    .recommendations h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--mcf-foreground);
+      text-align: center;
+    }
+
+    .recommendation-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+      background: var(--mcf-card);
+      border: 1px solid var(--mcf-border);
+      border-left: 4px solid var(--mcf-primary);
+      border-radius: var(--mcf-radius);
+    }
+
+    .recommendation-item.priority {
+      border-left-color: #ef4444;
+    }
+
+    .recommendation-item.important {
+      border-left-color: #f59e0b;
+    }
+
+    .recommendation-item.suggestion {
+      border-left-color: #3b82f6;
+    }
+
+    .recommendation-icon {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .recommendation-content {
+      flex: 1;
+    }
+
+    .recommendation-content h4 {
+      margin: 0 0 0.25rem 0;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--mcf-foreground);
+    }
+
+    .recommendation-content p {
+      margin: 0;
+      font-size: 0.9375rem; /* 15px */
+      color: var(--mcf-muted-foreground);
+      line-height: 1.6;
+    }
+
+    /* ========================================
+       SCREEN-ONLY UTILITIES
+       Hide print-only elements on screen
+       ======================================== */
+    .print-only,
+    .print-only-header,
+    .print-step-number {
+      display: none !important;
+    }
+
+    /* ========================================
+       ENHANCED PRINT STYLESHEET (NEW)
+       Comprehensive PDF generation with MCF branding
+       ======================================== */
+    @media print {
+      /* ========================================
+         CRITICAL: REPLACE EMOJIS WITH TEXT
+         Fixes "weird symbols" rendering issue in PDF
+         ======================================== */
+
+      /* Hide ALL emoji/icon elements that don't render in PDF */
+      .emoji,
+      [role="img"],
+      .icon-emoji,
+      .step-icon {
+        display: none !important;
+      }
+
+      /* Replace button emojis with text labels */
+      .btn-yes::before {
+        content: "YES" !important;
+        font-weight: 700;
+        font-size: 12pt;
+      }
+
+      .btn-no::before {
+        content: "NO" !important;
+        font-weight: 700;
+        font-size: 12pt;
+      }
+
+      .btn-start::before {
+        content: "START" !important;
+        font-weight: 700;
+        font-size: 12pt;
+      }
+
+      /* Remove emoji content from step headers */
+      .step-content h2::first-line,
+      .step-content h3::first-line,
+      .step-content h4::first-line {
+        font-family: Arial, sans-serif !important;
+      }
+
+      /* Replace common emoji patterns with text */
+      strong:first-child::before {
+        font-family: Arial, sans-serif !important;
+      }
+
+      /* Hide SVG icons completely */
+      svg {
+        display: none !important;
+      }
+
+      /* Icon font fallbacks - use standard fonts */
+      .icon-font,
+      .material-icons,
+      .fa,
+      .fas,
+      .far {
+        font-family: Arial, sans-serif !important;
+      }
+
+      /* ========================================
+         RESET & CLEANUP FOR PDF
+         ======================================== */
+      * {
+        box-shadow: none !important;
+        text-shadow: none !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+
+      /* ========================================
+         HIDE INTERACTIVE UI ELEMENTS
+         ======================================== */
+      .mcf-header,
+      .mcf-theme-toggle,
+      .mcf-save-indicator,
+      .btn-reset,
+      .skip-link,
+      button,
+      .action-btn,
+      nav,
+      .hamburger-menu,
+      .back-btn,
+      .reset-container,
+      .step-actions,
+      .welcome-back-screen,
+      input[type="button"],
+      input[type="submit"],
+      input[type="reset"] {
+        display: none !important;
+      }
+
+      /* ========================================
+         HIDE MCF BRANDING FOR CLEANER PDF
+         ======================================== */
+
+      /* Hide footer and logo from PDF */
+      .mcf-footer,
+      .mcf-logo,
+      .mcf-logo-header,
+      .mcf-footer-title,
+      .mcf-footer-tagline,
+      .mcf-footer-copyright,
+      .mcf-footer-links {
+        display: none !important;
+      }
+
+      /* ========================================
+         PAGE LAYOUT & SIZING
+         ======================================== */
+      @page {
+        size: letter portrait; /* 8.5in x 11in */
+        margin: 0.5in; /* Tighter margins for more content space */
+      }
+
+      @page :first {
+        size: letter portrait;
+        margin: 0.5in;
+      }
+
+      body {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-size: 10pt !important; /* Slightly smaller for more content */
+        line-height: 1.4 !important;
+        color: #000 !important;
+        background: #fff !important;
+        font-family: Arial, Helvetica, sans-serif !important; /* More modern, cleaner font */
+      }
+
+      /* Force dark mode override */
+      body.dark-mode {
+        background: #fff !important;
+        color: #000 !important;
+      }
+
+      .dark-mode * {
+        background-color: white !important;
+        color: #000 !important;
+      }
+
+      /* Force single-column layout */
+      .mcf-container,
+      .main-content,
+      .flowchart-container {
+        max-width: 100% !important;
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        display: block !important;
+      }
+
+      .main-content {
+        min-height: auto;
+      }
+
+      /* Convert all grids to single column */
+      .mcf-grid,
+      .grid,
+      .row,
+      .flex-row {
+        display: block !important;
+        columns: 1 !important;
+      }
+
+      .mcf-grid > *,
+      .grid > *,
+      .row > *,
+      .flex-row > * {
+        width: 100% !important;
+        margin-bottom: 1rem !important;
+        page-break-inside: avoid !important;
+      }
+
+      /* Flexbox to block */
+      .button-group,
+      .flex-container {
+        display: block !important;
+      }
+
+      /* ========================================
+         PAGE BREAK CONTROL
+         ======================================== */
+
+      /* Avoid breaking inside these elements */
+      .flowchart-step,
+      .section-card,
+      .mcf-card,
+      .card,
+      .review-item,
+      .recommendation-item,
+      .readiness-score,
+      .score-breakdown,
+      .checklist-item,
+      blockquote,
+      pre,
+      table {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      /* Keep headings with following content */
+      h1, h2, h3, h4, h5, h6 {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+        page-break-inside: avoid !important;
+      }
+
+      /* Lists - better formatting and spacing */
+      ul, ol {
+        page-break-inside: avoid !important;
+        margin: 0.4rem 0 !important;
+        padding-left: 1.5rem !important;
+      }
+
+      li {
+        page-break-inside: avoid !important;
+        margin-bottom: 0.2rem !important;
+        line-height: 1.4 !important;
+      }
+
+      /* Checklist items - compact and clear */
+      .checklist-item {
+        margin-bottom: 0.3rem !important;
+        padding: 0.2rem 0 !important;
+        border-bottom: none !important;
+      }
+
+      .checklist-item input[type="checkbox"] {
+        margin-right: 0.3rem !important;
+      }
+
+      /* Orphan and widow prevention */
+      p, li, td, span, div {
+        orphans: 3 !important;
+        widows: 3 !important;
+      }
+
+      /* ========================================
+         TYPOGRAPHY FOR PRINT
+         ======================================== */
+
+      /* Readable print font sizes with high contrast */
+      h1, .page-title h1 {
+        font-size: 18pt !important;
+        font-weight: bold !important;
+        margin-top: 0 !important;
+        margin-bottom: 0.4rem !important;
+        page-break-after: avoid !important;
+        color: #000 !important;
+        line-height: 1.3 !important;
+      }
+
+      h2 {
+        font-size: 14pt !important;
+        font-weight: bold !important;
+        margin-top: 0.75rem !important;
+        margin-bottom: 0.4rem !important;
+        page-break-after: avoid !important;
+        color: #000 !important;
+        line-height: 1.3 !important;
+      }
+
+      h3 {
+        font-size: 12pt !important;
+        font-weight: bold !important;
+        margin-top: 0.5rem !important;
+        margin-bottom: 0.3rem !important;
+        page-break-after: avoid !important;
+        color: #000 !important;
+        line-height: 1.3 !important;
+      }
+
+      h4 {
+        font-size: 11pt !important;
+        font-weight: bold !important;
+        margin-top: 0.4rem !important;
+        margin-bottom: 0.2rem !important;
+        page-break-after: avoid !important;
+        color: #000 !important;
+        line-height: 1.3 !important;
+      }
+
+      p, li, td, span, div {
+        font-size: 10pt !important;
+        line-height: 1.4 !important;
+        color: #000 !important;
+        margin-bottom: 0.3rem !important;
+      }
+
+      .page-subtitle {
+        font-size: 11pt !important;
+        color: #333 !important;
+        margin-bottom: 0.75rem !important;
+        font-style: italic !important;
+      }
+
+      /* Helper text */
+      .help-text,
+      .mcf-helper-text,
+      small {
+        font-size: 9pt !important;
+        line-height: 1.3 !important;
+        color: #444 !important;
+      }
+
+      /* ========================================
+         LINK HANDLING
+         ======================================== */
+
+      /* Show URLs for external links */
+      a[href^="http"]::after {
+        content: " (" attr(href) ")" !important;
+        font-size: 9pt !important;
+        color: #666 !important;
+        word-break: break-all !important;
+      }
+
+      /* Don't show URLs for internal anchors */
+      a[href^="#"]::after,
+      a[href^="javascript"]::after {
+        content: "" !important;
+      }
+
+      /* Link styling */
+      a {
+        color: #000 !important;
+        text-decoration: underline !important;
+      }
+
+      /* ========================================
+         CARD & LAYOUT STYLES
+         ======================================== */
+
+      /* Show all flowchart steps for print */
+      .flowchart-step {
+        display: block !important;
+        background: white !important;
+        border: 1.5pt solid #333 !important;
+        border-radius: 4pt !important;
+        padding: 0.75rem !important;
+        margin-bottom: 0.75rem !important;
+        box-shadow: none !important;
+        page-break-inside: avoid !important;
+      }
+
+      /* Cards - simple border, no shadows, more compact */
+      .section-card,
+      .mcf-card,
+      .card {
+        background: white !important;
+        border: 1pt solid #666 !important;
+        border-radius: 3pt !important;
+        padding: 0.5rem !important;
+        margin-bottom: 0.5rem !important;
+        box-shadow: none !important;
+      }
+
+      /* Review and recommendation items - cleaner layout */
+      .readiness-score,
+      .review-checklist,
+      .recommendations {
+        border: 1pt solid #999 !important;
+        background: #fff !important;
+        padding: 0.5rem !important;
+        margin-bottom: 0.5rem !important;
+      }
+
+      /* Review items - compact styling */
+      .review-item,
+      .recommendation-item {
+        margin-bottom: 0.5rem !important;
+        padding: 0.5rem !important;
+        border-bottom: 0.5pt solid #ddd !important;
+      }
+
+      /* Help text styling - lighter for better readability */
+      .help-text {
+        background: #f5f5f5 !important;
+        border-left: 2pt solid #666 !important;
+        padding: 0.4rem !important;
+        margin: 0.4rem 0 !important;
+        -webkit-print-color-adjust: exact !important;
+      }
+
+      /* Score circle for print - convert to simple text */
+      .score-circle {
+        display: block !important;
+        width: auto !important;
+        height: auto !important;
+        border: 3px solid #000 !important;
+        border-radius: 0 !important;
+        padding: 1rem !important;
+        text-align: center !important;
+        font-size: 18pt !important;
+        font-weight: bold !important;
+        margin: 1rem auto !important;
+        background: white !important;
+        color: #000 !important;
+      }
+
+      /* Progress bars - convert to percentage text */
+      .progress-bar::after {
+        content: " (" attr(data-progress) "%)" !important;
+        font-weight: bold !important;
+      }
+
+      .progress-bar {
+        display: block !important;
+        border: 2px solid #000 !important;
+        padding: 0.5rem !important;
+        margin: 0.5rem 0 !important;
+        background: white !important;
+      }
+
+      /* ========================================
+         COLOR AND CONTRAST OPTIMIZATION
+         ======================================== */
+
+      /* High contrast text on white background */
+      body, p, li, span, div {
+        color: #000 !important;
+        background: #fff !important;
+      }
+
+      /* Preserve MCF brand colors in high contrast */
+      .mcf-primary-text {
+        color: #012699 !important; /* MCF Blue - visible in print */
+      }
+
+      .mcf-secondary-text {
+        color: #1a7a0f !important; /* Darker green for print contrast */
+      }
+
+      .mcf-accent-text {
+        color: #d4a003 !important; /* Darker amber for print */
+      }
+
+      /* Backgrounds - subtle for print */
+      .highlight-bg {
+        background: #f5f5f5 !important;
+        border: 1px solid #ddd !important;
+      }
+
+      /* Remove all shadows and gradients (except footer) */
+      *:not(.mcf-footer):not(.mcf-footer *) {
+        background-image: none !important;
+      }
+
+      /* Borders for definition */
+      .bordered {
+        border: 1px solid #333 !important;
+      }
+
+      /* ========================================
+         IMAGES & GRAPHICS
+         ======================================== */
+
+      img {
+        max-width: 100% !important;
+        height: auto !important;
+        page-break-inside: avoid !important;
+        display: block !important;
+        margin: 0.5rem auto !important;
+      }
+
+      /* Charts and graphs - ensure visibility */
+      canvas {
+        max-width: 100% !important;
+        height: auto !important;
+        page-break-inside: avoid !important;
+      }
+
+      /* SVG fallback - preserve if critical (already hidden above) */
+      svg.preserve-in-print {
+        display: block !important;
+        max-width: 100% !important;
+        height: auto !important;
+      }
+
+      /* ========================================
+         TABLES
+         ======================================== */
+
+      table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        page-break-inside: avoid !important;
+        margin: 1rem 0 !important;
+      }
+
+      thead {
+        display: table-header-group !important;
+      }
+
+      tfoot {
+        display: table-footer-group !important;
+      }
+
+      tr {
+        page-break-inside: avoid !important;
+      }
+
+      th, td {
+        border: 1px solid #333 !important;
+        padding: 0.5rem !important;
+        text-align: left !important;
+        font-size: 10pt !important;
+      }
+
+      th {
+        background: #f0f0f0 !important;
+        font-weight: bold !important;
+      }
+
+      /* ========================================
+         UTILITY CLASSES
+         ======================================== */
+
+      /* Hide web-only elements */
+      .no-print,
+      .screen-only,
+      .web-only {
+        display: none !important;
+      }
+
+      /* Show print-only elements */
+      .print-only {
+        display: block !important;
+      }
+
+      /* Print-only header (added by JavaScript) */
+      .print-only-header {
+        display: block !important;
+        page-break-after: avoid !important;
+        page-break-inside: avoid !important;
+        margin-bottom: 2rem !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      /* Print step numbers (added by JavaScript) */
+      .print-step-number {
+        display: block !important;
+        font-size: 10pt !important;
+        color: #666 !important;
+        font-weight: 600 !important;
+        margin-bottom: 0.5rem !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.05em !important;
+      }
+
+      /* ========================================
+         ACCESSIBILITY
+         ======================================== */
+
+      /* Ensure sufficient contrast */
+      .low-contrast {
+        color: #000 !important;
+      }
+
+      /* Alt text for images without alt */
+      img:not([alt])::after {
+        content: "[Image]" !important;
+        display: block !important;
+        font-style: italic !important;
+      }
+    }
+
+    /* ========================================
+       ACCESSIBILITY - REDUCED MOTION
+       ======================================== */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* ========================================
+       SKIP LINK IMPLEMENTATION (NEW - CRITICAL)
+       Hidden by default, visible on keyboard focus
+       ======================================== */
+    .skip-link {
+      position: absolute;
+      top: -100px;
+      left: 0;
+      z-index: 1000;
+      padding: 1rem 1.5rem;
+      background: var(--mcf-primary-color);
+      color: white;
+      font-weight: 600;
+      text-decoration: none;
+      transition: top 0.3s ease;
+    }
+
+    .skip-link:focus,
+    .skip-link:focus-visible {
+      top: 0; /* Slide into view */
+      outline: 3px solid var(--mcf-accent-color);
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Skip Link - FIRST FOCUSABLE ELEMENT (NEW - CRITICAL) -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- Header -->
+  <header class="mcf-header">
+    <div class="mcf-container">
+      <div class="mcf-header-content">
+        <div class="mcf-header-brand">
+          <img
+            src="https://static.wixstatic.com/media/c24a60_2b6231b666214539ae22ebd2dffe7a09~mv2.png"
+            alt="My College Finance Logo"
+            class="mcf-logo-header"
+          >
+          <div class="mcf-brand-text">
+            <h1 class="mcf-brand-name">MY COLLEGE FINANCE</h1>
+            <p class="mcf-tagline">EDUCATE • MOTIVATE • ELEVATE</p>
+          </div>
+        </div>
+        <button id="mcf-theme-toggle" class="mcf-theme-toggle" aria-label="Toggle dark mode">
+          <svg class="mcf-sun-icon" width="24" height="24" viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="10" r="4" fill="currentColor"/>
+            <path d="M10 0v4M10 16v4M20 10h-4M4 10H0M17.07 2.93l-2.83 2.83M5.76 14.24l-2.83 2.83M17.07 17.07l-2.83-2.83M5.76 5.76L2.93 2.93"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <svg class="mcf-moon-icon" width="24" height="24" viewBox="0 0 20 20" fill="none" style="display:none;">
+            <path d="M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C10.3395 3 10.6734 3.02389 11 3.07039C9.27477 4.07544 8 5.8965 8 8C8 11.3137 10.6863 14 14 14C15.1035 14 16.0754 13.6238 16.9296 12.9998C16.9762 13.3266 17 13.6605 17 14Z"
+                  fill="currentColor"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Saved Results Banner - REMOVED (blocking content) -->
+
+  <!-- Main Content -->
+  <main class="main-content" id="main-content">
+    <div class="mcf-container">
+      <!-- Page Title -->
+      <div class="page-title">
+        <h1>🔄 FAFSA Corrections Troubleshooting Flowchart</h1>
+      </div>
+      <p class="page-subtitle">
+        Use this interactive flowchart to determine what kind of correction you need to make — and the fastest way to fix it.
+      </p>
+
+      <!-- Flowchart Container -->
+      <div class="flowchart-container" id="flowchart-container">
+
+        <!-- Start Step -->
+        <div class="flowchart-step active" id="step-start">
+          <div class="step-icon">🚀</div>
+          <div class="step-content">
+            <h2>Start Here</h2>
+            <p>Let's identify and fix your FAFSA correction. Click the button below to begin!</p>
+            <div class="step-actions">
+              <button class="action-btn btn-start" onclick="startFlowchart()" aria-label="Start FAFSA troubleshooting flowchart">
+                🚀 Start FAFSA Troubleshooting
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 1: Personal Information -->
+        <div class="flowchart-step" id="step-personal">
+          <div class="step-icon decision-icon">?</div>
+          <div class="step-content">
+            <h3>Personal Information Errors</h3>
+            <p><strong>❓ Did you enter the wrong name, birthdate, or SSN?</strong></p>
+            <div class="step-actions">
+              <button class="action-btn btn-yes" data-step="personal" data-answer="yes" aria-label="Yes, I have personal information errors">
+                ✓ Yes
+              </button>
+              <button class="action-btn btn-no" data-step="personal" data-answer="no" aria-label="No, personal information is correct">
+                ✗ No
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 1A: Personal Action -->
+        <div class="flowchart-step" id="step-personal-action">
+          <div class="step-icon action-icon">✓</div>
+          <div class="step-content">
+            <h3>Fix Personal Information</h3>
+            <p>Here's how to correct your personal information:</p>
+            <div class="help-text">
+              <h4>📝 Steps to Fix:</h4>
+              <ul>
+                <li>Log into StudentAid.gov using your FSA ID</li>
+                <li>Select "Make FAFSA Corrections"</li>
+                <li>Update your name, birthdate, or SSN</li>
+                <li>Submit the correction</li>
+              </ul>
+            </div>
+            <div class="step-actions">
+              <button class="action-btn btn-next" onclick="nextStep()" aria-label="Continue to next step">
+                Continue →
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Financial Information -->
+        <div class="flowchart-step" id="step-financial">
+          <div class="step-icon decision-icon">?</div>
+          <div class="step-content">
+            <h3>Financial or Tax Data Errors</h3>
+            <p><strong>💰 Was the wrong income, AGI, or tax info entered?</strong></p>
+            <div class="step-actions">
+              <button class="action-btn btn-yes" data-step="financial" data-answer="yes" aria-label="Yes, I have financial information errors">
+                ✓ Yes
+              </button>
+              <button class="action-btn btn-no" data-step="financial" data-answer="no" aria-label="No, financial information is correct">
+                ✗ No
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2A: Financial Action -->
+        <div class="flowchart-step" id="step-financial-action">
+          <div class="step-icon action-icon">✓</div>
+          <div class="step-content">
+            <h3>Fix Financial Information</h3>
+            <p>Here's how to correct your financial/tax data:</p>
+            <div class="help-text">
+              <h4>📝 Steps to Fix:</h4>
+              <ul>
+                <li>Gather correct tax documents (W-2, 1040)</li>
+                <li>Log into StudentAid.gov</li>
+                <li>Select "Make FAFSA Corrections"</li>
+                <li>Update income, AGI, and tax information</li>
+                <li>Consider using the IRS Data Retrieval Tool</li>
+              </ul>
+            </div>
+            <div class="step-actions">
+              <button class="action-btn btn-next" onclick="nextStep()" aria-label="Continue to next step">
+                Continue →
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Signature Issues -->
+        <div class="flowchart-step" id="step-signature">
+          <div class="step-icon decision-icon">?</div>
+          <div class="step-content">
+            <h3>Signature Issues</h3>
+            <p><strong>✍️ Is your FAFSA missing a required signature?</strong></p>
+            <div class="step-actions">
+              <button class="action-btn btn-yes" data-step="signature" data-answer="yes" aria-label="Yes, FAFSA is missing a signature">
+                ✓ Yes
+              </button>
+              <button class="action-btn btn-no" data-step="signature" data-answer="no" aria-label="No, all signatures are present">
+                ✗ No
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3A: Signature Action -->
+        <div class="flowchart-step" id="step-signature-action">
+          <div class="step-icon action-icon">✓</div>
+          <div class="step-content">
+            <h3>Add Required Signatures</h3>
+            <p>Here's how to add missing signatures:</p>
+            <div class="help-text">
+              <h4>📝 Steps to Fix:</h4>
+              <ul>
+                <li>Identify who needs to sign (student, parent(s))</li>
+                <li>Log into StudentAid.gov with appropriate FSA ID</li>
+                <li>Select "Sign FAFSA"</li>
+                <li>Review and electronically sign</li>
+              </ul>
+            </div>
+            <div class="step-actions">
+              <button class="action-btn btn-next" onclick="nextStep()" aria-label="Continue to next step">
+                Continue →
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: School Updates -->
+        <div class="flowchart-step" id="step-schools">
+          <div class="step-icon decision-icon">?</div>
+          <div class="step-content">
+            <h3>School Code or College List Update</h3>
+            <p><strong>🏫 Need to add or remove schools from your FAFSA?</strong></p>
+            <div class="step-actions">
+              <button class="action-btn btn-yes" data-step="schools" data-answer="yes" aria-label="Yes, I need to update school list">
+                ✓ Yes
+              </button>
+              <button class="action-btn btn-no" data-step="schools" data-answer="no" aria-label="No, school list is correct">
+                ✗ No
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4A: Schools Action -->
+        <div class="flowchart-step" id="step-schools-action">
+          <div class="step-icon action-icon">✓</div>
+          <div class="step-content">
+            <h3>Update School List</h3>
+            <p>Here's how to update your school list:</p>
+            <div class="help-text">
+              <h4>📝 Steps to Fix:</h4>
+              <ul>
+                <li>Log into StudentAid.gov using your FSA ID</li>
+                <li>Select your FAFSA application</li>
+                <li>Click "Make FAFSA Corrections"</li>
+                <li>Navigate to the "School Selection" section</li>
+                <li>To add schools: Use the school search tool</li>
+                <li>To remove schools: Click "Remove" next to unwanted schools</li>
+                <li>Submit your corrections</li>
+              </ul>
+            </div>
+            <div class="help-text" style="margin-top: 1rem; background: #e0f2fe; border-left-color: #0284c7;">
+              <h4>💡 Pro Tip:</h4>
+              <ul>
+                <li>You can list up to 20 schools. Put your top choice first!</li>
+              </ul>
+            </div>
+            <div class="step-actions">
+              <button class="action-btn btn-next" onclick="nextStep()" aria-label="Continue to next step">
+                Continue →
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 5: Household Changes -->
+        <div class="flowchart-step" id="step-household">
+          <div class="step-icon decision-icon">?</div>
+          <div class="step-content">
+            <h3>Other Corrections</h3>
+            <p><strong>👨‍👩‍👧‍👦 Did your household size, dependents, or assets change?</strong></p>
+            <div class="step-actions">
+              <button class="action-btn btn-yes" data-step="household" data-answer="yes" aria-label="Yes, household information changed">
+                ✓ Yes
+              </button>
+              <button class="action-btn btn-no" data-step="household" data-answer="no" aria-label="No, household information is correct">
+                ✗ No
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 5A: Household Action -->
+        <div class="flowchart-step" id="step-household-action">
+          <div class="step-icon action-icon">✓</div>
+          <div class="step-content">
+            <h3>Update Household Information</h3>
+            <p>Here's how to update household information:</p>
+            <div class="help-text">
+              <h4>📝 Steps to Fix:</h4>
+              <ul>
+                <li>Log into StudentAid.gov using your FSA ID</li>
+                <li>Select your FAFSA application</li>
+                <li>Click "Make FAFSA Corrections"</li>
+                <li>Navigate to the "Student Demographics" section</li>
+                <li>Update household size and marital status</li>
+                <li>Review all dependent information</li>
+                <li>Submit your corrections</li>
+              </ul>
+            </div>
+            <div class="help-text" style="margin-top: 1rem; background: #e0f2fe; border-left-color: #0284c7;">
+              <h4>💡 Pro Tip:</h4>
+              <ul>
+                <li>Household size includes you, your spouse (if married), and any dependents you support</li>
+              </ul>
+            </div>
+            <div class="step-actions">
+              <button class="action-btn btn-next" onclick="nextStep()" aria-label="Continue to next step">
+                Continue →
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 6: Status Check -->
+        <div class="flowchart-step" id="step-status">
+          <div class="step-icon decision-icon">?</div>
+          <div class="step-content">
+            <h3>Correction Submitted – Now What?</h3>
+            <p><strong>📨 Have you resubmitted and received a new confirmation?</strong></p>
+            <div class="step-actions">
+              <button class="action-btn btn-yes" data-step="status" data-answer="yes" aria-label="Yes, received confirmation">
+                ✓ Yes
+              </button>
+              <button class="action-btn btn-no" data-step="status" data-answer="no" aria-label="No, have not received confirmation yet">
+                ✗ No
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 6A: Status Action -->
+        <div class="flowchart-step" id="step-status-action">
+          <div class="step-icon action-icon">✓</div>
+          <div class="step-content">
+            <h3>Next Steps After Submission</h3>
+            <div class="help-text">
+              <h4>📝 What to Expect:</h4>
+              <ul>
+                <li><strong>Confirmation Email:</strong> You'll receive a confirmation within 24-48 hours</li>
+                <li><strong>Processing Time:</strong> Corrections typically process within 3-5 business days</li>
+                <li><strong>Check Status:</strong> Monitor your application status online</li>
+                <li><strong>School Notification:</strong> Your schools will receive updated information</li>
+                <li><strong>Financial Aid Packages:</strong> May be updated based on corrections</li>
+              </ul>
+            </div>
+            <div class="help-text" style="margin-top: 1rem; background: #e0f2fe; border-left-color: #0284c7;">
+              <h4>💡 Pro Tip:</h4>
+              <ul>
+                <li>Keep your confirmation email as proof of submission</li>
+              </ul>
+            </div>
+            <div class="step-actions">
+              <button class="action-btn btn-next" onclick="nextStep()">
+                Complete Troubleshooting →
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Complete Step (Review Step) -->
+        <div class="flowchart-step" id="step-complete">
+          <div class="step-icon" style="background: linear-gradient(135deg, var(--mcf-brand-blue), var(--mcf-primary));">📋</div>
+          <div class="step-content">
+            <h2>Review Your Answers</h2>
+            <p>You've completed all the questions! Review your answers below and see your readiness score.</p>
+            <div class="step-actions" style="margin-top: 2rem;">
+              <button class="action-btn btn-start" onclick="submitResults()" aria-label="View results and readiness score">
+                📊 View Results & Readiness Score
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Results Step -->
+        <div class="flowchart-step" id="step-results">
+          <div class="step-icon" style="background: linear-gradient(135deg, var(--mcf-brand-green), #16a34a);">🎉</div>
+          <div class="step-content">
+            <h2>You're All Set!</h2>
+            <p>Your FAFSA correction has been submitted and will be processed within 3–5 business days.</p>
+            <p style="margin-top: 1rem;">Check your email for confirmation and monitor StudentAid.gov for updates.</p>
+            <div class="step-actions" style="margin-top: 2rem;">
+              <button class="action-btn btn-next" onclick="window.open('https://studentaid.gov/', '_blank')" aria-label="Visit StudentAid.gov website">
+                Visit StudentAid.gov
+              </button>
+              <button class="action-btn btn-next" id="downloadPdfBtn" onclick="downloadPDF()" aria-label="Download results as PDF">
+                📥 Download PDF
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Readiness Score Section -->
+      <div class="readiness-score" id="readinessScore" style="display: none;">
+        <h2>📊 Your FAFSA Readiness Score</h2>
+
+        <div class="score-display">
+          <div class="score-circle" id="scoreCircle">
+            <span id="scoreNumber">0</span>
+          </div>
+          <div class="score-text">
+            <h3 id="scoreTitle">Calculating...</h3>
+            <p id="scoreDescription">Based on your responses</p>
+          </div>
+        </div>
+
+        <div class="score-breakdown" id="scoreBreakdown">
+          <!-- Breakdown items will be populated by JavaScript -->
+        </div>
+
+        <div class="review-checklist" id="reviewChecklist">
+          <h3>📋 Your Answers Review</h3>
+          <div id="reviewChecklistItems">
+            <!-- Review items will be populated by JavaScript -->
+          </div>
+        </div>
+
+        <div class="recommendations" id="recommendations">
+          <h3>🎯 Personalized Recommendations</h3>
+          <div id="recommendationsList">
+            <!-- Recommendations will be populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Completed Results Section (shown on page load if completed) -->
+      <div class="completed-results-container" id="completedResultsContainer" style="display: none;">
+        <div class="flowchart-step active" style="display: block; text-align: center; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 2px solid var(--mcf-primary-color);">
+          <div class="step-icon">🎉</div>
+          <div class="step-content">
+            <h2>Welcome Back!</h2>
+            <p>You've already completed this FAFSA troubleshooting flowchart.</p>
+            <div class="step-actions" style="margin-top: 2rem; flex-direction: column; gap: 1rem; align-items: center; width: 100%;">
+              <button class="action-btn btn-start" onclick="viewSavedResults()" style="background: var(--mcf-primary-color); color: white; font-size: 1.125rem; min-height: 54px; max-width: 400px; width: 100%;">
+                📊 View My Results
+              </button>
+              <button class="action-btn" onclick="downloadSavedResults()" style="background: var(--mcf-secondary-color); color: white; font-size: 1.125rem; min-height: 54px; max-width: 400px; width: 100%;">
+                📥 Download Results as PDF
+              </button>
+              <button class="action-btn" onclick="startNewFlowchart()" style="background: white; color: var(--mcf-foreground); border: 2px solid var(--mcf-border-color); font-size: 1rem; min-height: 48px; max-width: 400px; width: 100%;">
+                🔄 Start New Flowchart
+              </button>
+            </div>
+            <p style="margin-top: 1.5rem; font-size: 0.9375rem; color: var(--mcf-text-muted);">
+              <strong>Completed on:</strong> <span id="completionDate"></span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reset Container -->
+      <div class="reset-container">
+        <button class="btn-reset" onclick="resetFlowchart()" aria-label="Reset flowchart to start over">
+          🔄 Reset Flowchart
+        </button>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="mcf-footer">
+    <div class="mcf-container">
+      <div class="mcf-footer-content">
+        <img
+          src="https://static.wixstatic.com/media/c24a60_2b6231b666214539ae22ebd2dffe7a09~mv2.png"
+          alt="My College Finance Logo"
+          class="mcf-logo"
+        >
+        <h2 class="mcf-footer-title">MY COLLEGE FINANCE</h2>
+        <div class="mcf-footer-links">
+          <a href="https://www.mycollegefinance.com/" class="mcf-footer-link" target="_blank">Main Website</a>
+          <span class="mcf-footer-separator">•</span>
+          <a href="https://www.mycollegefinance.com/privacy-policy" class="mcf-footer-link" target="_blank">Privacy Policy</a>
+          <span class="mcf-footer-separator">•</span>
+          <a href="https://www.mycollegefinance.com/terms-policy" class="mcf-footer-link" target="_blank">Terms of Service</a>
+          <span class="mcf-footer-separator">•</span>
+          <a href="https://linktr.ee/mycollegefinance" class="mcf-footer-link" target="_blank">Social Media</a>
+        </div>
+        <p class="mcf-footer-tagline">EDUCATE • MOTIVATE • ELEVATE</p>
+        <p class="mcf-footer-copyright">© 2025 My College Finance. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ========================================
+    // FLOWCHART STATE MANAGEMENT
+    // ========================================
+    const flowchartState = {
+      currentStep: 'start',
+      history: [],
+      userAnswers: {} // Track user answers for review
+    };
+
+    // Flow map: defines what step comes next
+    const flowMap = {
+      'personal-yes': 'personal-action',
+      'personal-no': 'financial',
+      'personal-action': 'financial',
+      'financial-yes': 'financial-action',
+      'financial-no': 'signature',
+      'financial-action': 'signature',
+      'signature-yes': 'signature-action',
+      'signature-no': 'schools',
+      'signature-action': 'schools',
+      'schools-yes': 'schools-action',
+      'schools-no': 'household',
+      'schools-action': 'household',
+      'household-yes': 'household-action',
+      'household-no': 'status',
+      'household-action': 'status',
+      'status-yes': 'status-action',
+      'status-no': 'complete',
+      'status-action': 'complete'
+    };
+
+    // ========================================
+    // DARK MODE IMPLEMENTATION
+    // ========================================
+    function initDarkMode() {
+      const currentTheme = localStorage.getItem('mcf-theme') || 'light';
+      if (currentTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+        updateThemeIcon(true);
+      }
+
+      const toggleBtn = document.getElementById('mcf-theme-toggle');
+      if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+          const isDark = document.body.classList.toggle('dark-mode');
+          localStorage.setItem('mcf-theme', isDark ? 'dark' : 'light');
+          updateThemeIcon(isDark);
+        });
+      }
+    }
+
+    function updateThemeIcon(isDark) {
+      const sunIcon = document.querySelector('.mcf-sun-icon');
+      const moonIcon = document.querySelector('.mcf-moon-icon');
+      if (sunIcon && moonIcon) {
+        sunIcon.style.display = isDark ? 'none' : 'block';
+        moonIcon.style.display = isDark ? 'block' : 'none';
+      }
+    }
+
+    // ========================================
+    // FLOWCHART NAVIGATION
+    // ========================================
+    function startFlowchart() {
+      navigateToStep('personal');
+    }
+
+    function navigateToStep(stepId) {
+      // Hide all steps
+      document.querySelectorAll('.flowchart-step').forEach(step => {
+        step.classList.remove('active');
+      });
+
+      // Show target step
+      const targetStep = document.getElementById(`step-${stepId}`);
+      if (targetStep) {
+        targetStep.classList.add('active');
+        flowchartState.currentStep = stepId;
+
+        // Scroll to step
+        targetStep.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    function nextStep() {
+      const currentKey = `${flowchartState.currentStep}`;
+      const nextStepId = flowMap[currentKey];
+
+      if (nextStepId) {
+        navigateToStep(nextStepId);
+      }
+    }
+
+    // ========================================
+    // SAVED RESULTS FUNCTIONALITY
+    // ========================================
+
+    // Check if user has completed flowchart on page load
+    function checkForCompletedFlowchart() {
+      const savedResults = localStorage.getItem('fafsaFlowchartResults');
+      const completionDate = localStorage.getItem('fafsaFlowchartCompletionDate');
+
+      if (savedResults && completionDate) {
+        // Show completed results container with buttons
+        const completedContainer = document.getElementById('completedResultsContainer');
+        const flowchartContainer = document.querySelector('.flowchart-container');
+        const dateSpan = document.getElementById('completionDate');
+
+        if (completedContainer && flowchartContainer && dateSpan) {
+          completedContainer.style.display = 'block';
+          flowchartContainer.style.display = 'none';
+          dateSpan.textContent = new Date(completionDate).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+        }
+      }
+    }
+
+    // Show banner (disabled - banner removed from UI)
+    function showResultsBanner() {
+      // Banner removed - function kept for compatibility
+    }
+
+    // Hide banner (disabled - banner removed from UI)
+    function hideResultsBanner() {
+      // Banner removed - function kept for compatibility
+    }
+
+    // View saved results
+    function viewSavedResults() {
+      const savedResults = localStorage.getItem('fafsaFlowchartResults');
+
+      if (savedResults) {
+        try {
+          const results = JSON.parse(savedResults);
+
+          // Restore flowchart state
+          flowchartState.userAnswers = results.userAnswers || {};
+
+          // Hide completed container, show flowchart
+          document.getElementById('completedResultsContainer').style.display = 'none';
+          document.querySelector('.flowchart-container').style.display = 'block';
+
+          // Keep banner visible when viewing results
+          showResultsBanner();
+
+          // Navigate directly to results
+          updateReadinessScore();
+          navigateToStep('results');
+
+          // Scroll to readiness score
+          setTimeout(() => {
+            const scoreElement = document.getElementById('readinessScore');
+            if (scoreElement) {
+              scoreElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          }, 500);
+        } catch (error) {
+          console.error('Error loading saved results:', error);
+          alert('Unable to load saved results. Please start a new flowchart.');
+        }
+      }
+    }
+
+    // Download saved results as PDF
+    function downloadSavedResults() {
+      const savedResults = localStorage.getItem('fafsaFlowchartResults');
+
+      if (savedResults) {
+        try {
+          const results = JSON.parse(savedResults);
+          flowchartState.userAnswers = results.userAnswers || {};
+
+          // Trigger print dialog for PDF download
+          window.print();
+        } catch (error) {
+          console.error('Error downloading saved results:', error);
+          alert('Unable to download results. Please try again.');
+        }
+      }
+    }
+
+    // Start new flowchart (clear saved results)
+    function startNewFlowchart() {
+      const message = '⚠️ WARNING: Starting a new flowchart will permanently delete your saved results.\n\n' +
+                      'Consider downloading your results as a PDF before continuing.\n\n' +
+                      'Are you sure you want to proceed?';
+
+      if (confirm(message)) {
+        // Clear saved results
+        localStorage.removeItem('fafsaFlowchartResults');
+        localStorage.removeItem('fafsaFlowchartCompletionDate');
+
+        // Hide banner
+        hideResultsBanner();
+
+        // Reset and show flowchart
+        resetFlowchartInternal();
+
+        // Hide completed container, show flowchart
+        document.getElementById('completedResultsContainer').style.display = 'none';
+        document.querySelector('.flowchart-container').style.display = 'block';
+      }
+    }
+
+    // Save results when user completes flowchart
+    function saveFlowchartCompletion() {
+      const results = {
+        userAnswers: flowchartState.userAnswers,
+        completionDate: new Date().toISOString()
+      };
+
+      localStorage.setItem('fafsaFlowchartResults', JSON.stringify(results));
+      localStorage.setItem('fafsaFlowchartCompletionDate', results.completionDate);
+    }
+
+    // Reset flowchart with warning (called from Reset button)
+    function resetFlowchart() {
+      // Check if there are saved results
+      const hasSavedResults = localStorage.getItem('fafsaFlowchartResults');
+
+      if (hasSavedResults) {
+        const message = '⚠️ WARNING: Resetting will permanently delete your saved results.\n\n' +
+                        'Consider downloading your results as a PDF before continuing.\n\n' +
+                        'Are you sure you want to reset?';
+
+        if (!confirm(message)) {
+          return; // User cancelled, don't reset
+        }
+      }
+
+      // Clear saved results from localStorage
+      localStorage.removeItem('fafsaFlowchartResults');
+      localStorage.removeItem('fafsaFlowchartCompletionDate');
+
+      // Hide banner
+      hideResultsBanner();
+
+      // Perform the actual reset
+      resetFlowchartInternal();
+    }
+
+    // Internal reset function (no warning)
+    function resetFlowchartInternal() {
+      // Clear all button states
+      document.querySelectorAll('.action-btn').forEach(btn => {
+        btn.classList.remove('selected', 'unselected');
+      });
+
+      // Reset state
+      flowchartState.currentStep = 'start';
+      flowchartState.history = [];
+      flowchartState.userAnswers = {};
+
+      // Hide readiness score
+      const scoreElement = document.getElementById('readinessScore');
+      if (scoreElement) {
+        scoreElement.style.display = 'none';
+      }
+
+      // Navigate to start
+      navigateToStep('start');
+    }
+
+    // ========================================
+    // BUTTON STATE MANAGEMENT (THE FIX!)
+    // ========================================
+    function handleButtonClick(event) {
+      const button = event.target.closest('.action-btn');
+      if (!button) return;
+
+      const stepId = button.dataset.step;
+      const answer = button.dataset.answer;
+
+      if (!stepId || !answer) return;
+
+      // Store user answer
+      flowchartState.userAnswers[stepId] = answer;
+
+      // Find both buttons in this step
+      const stepElement = button.closest('.flowchart-step');
+      const allButtons = stepElement.querySelectorAll('.action-btn');
+      const yesButton = stepElement.querySelector('[data-answer="yes"]');
+      const noButton = stepElement.querySelector('[data-answer="no"]');
+
+      // Clear previous states
+      allButtons.forEach(btn => {
+        btn.classList.remove('selected', 'unselected');
+      });
+
+      // Apply new states
+      if (answer === 'yes') {
+        yesButton.classList.add('selected');
+        noButton.classList.add('unselected');
+      } else {
+        noButton.classList.add('selected');
+        yesButton.classList.add('unselected');
+      }
+
+      // Navigate to next step after a short delay
+      setTimeout(() => {
+        const nextStepId = flowMap[`${stepId}-${answer}`];
+        if (nextStepId) {
+          navigateToStep(nextStepId);
+        }
+      }, 300);
+    }
+
+    // ========================================
+    // SUBMIT RESULTS & READINESS SCORE
+    // ========================================
+    function submitResults() {
+      // Save completion state to localStorage
+      saveFlowchartCompletion();
+
+      // Show readiness score
+      updateReadinessScore();
+
+      // Navigate to results step
+      navigateToStep('results');
+
+      // Scroll to readiness score after a short delay
+      setTimeout(() => {
+        const scoreElement = document.getElementById('readinessScore');
+        if (scoreElement) {
+          scoreElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 500);
+    }
+
+    // Question data for review
+    const questionData = {
+      personal: {
+        icon: '👤',
+        question: 'Personal Information Errors',
+        description: 'Did you enter the wrong name, birthdate, or SSN?',
+        feedback: {
+          yes: 'You corrected your personal information on StudentAid.gov.',
+          no: 'Your personal information was correct - no changes needed.'
+        }
+      },
+      financial: {
+        icon: '💰',
+        question: 'Financial or Tax Data Errors',
+        description: 'Was the wrong income, AGI, or tax info entered?',
+        feedback: {
+          yes: 'You corrected your financial/tax data and may have used the IRS Data Retrieval Tool.',
+          no: 'Your financial information was correct - no changes needed.'
+        }
+      },
+      signature: {
+        icon: '✍️',
+        question: 'Signature Issues',
+        description: 'Is your FAFSA missing a required signature?',
+        feedback: {
+          yes: 'You added the required signatures electronically.',
+          no: 'All required signatures were present.'
+        }
+      },
+      schools: {
+        icon: '🏫',
+        question: 'School Code or College List Update',
+        description: 'Need to add or remove schools from your FAFSA?',
+        feedback: {
+          yes: 'You updated your school list with correct school codes.',
+          no: 'Your school list was correct - no changes needed.'
+        }
+      },
+      household: {
+        icon: '👨‍👩‍👧‍👦',
+        question: 'Household/Dependents Changes',
+        description: 'Did your household size, dependents, or assets change?',
+        feedback: {
+          yes: 'You updated your household information and dependency status.',
+          no: 'Your household information was correct - no changes needed.'
+        }
+      },
+      status: {
+        icon: '📨',
+        question: 'Correction Submitted',
+        description: 'Have you resubmitted and received a new confirmation?',
+        feedback: {
+          yes: 'Great! You received confirmation and know what to expect next.',
+          no: 'Remember to submit your corrections and watch for confirmation.'
+        }
+      }
+    };
+
+    function updateReadinessScore() {
+      const readinessData = {
+        personalInfo: { score: 0, maxScore: 20, weight: 0.2 },
+        financialInfo: { score: 0, maxScore: 25, weight: 0.25 },
+        signature: { score: 0, maxScore: 15, weight: 0.15 },
+        schoolList: { score: 0, maxScore: 20, weight: 0.2 },
+        householdInfo: { score: 0, maxScore: 20, weight: 0.2 }
+      };
+
+      let totalScore = 0;
+      let totalMaxScore = 0;
+
+      // Calculate scores based on user answers
+      // Logic: "No" = No problems = Higher score, "Yes" = Has problems = Lower score
+      if (flowchartState.userAnswers.personal !== undefined) {
+        readinessData.personalInfo.score = flowchartState.userAnswers.personal === 'no' ? 20 : 10;
+      }
+      totalScore += readinessData.personalInfo.score * readinessData.personalInfo.weight;
+      totalMaxScore += readinessData.personalInfo.maxScore * readinessData.personalInfo.weight;
+
+      if (flowchartState.userAnswers.financial !== undefined) {
+        readinessData.financialInfo.score = flowchartState.userAnswers.financial === 'no' ? 25 : 12;
+      }
+      totalScore += readinessData.financialInfo.score * readinessData.financialInfo.weight;
+      totalMaxScore += readinessData.financialInfo.maxScore * readinessData.financialInfo.weight;
+
+      if (flowchartState.userAnswers.signature !== undefined) {
+        readinessData.signature.score = flowchartState.userAnswers.signature === 'no' ? 15 : 8;
+      }
+      totalScore += readinessData.signature.score * readinessData.signature.weight;
+      totalMaxScore += readinessData.signature.maxScore * readinessData.signature.weight;
+
+      if (flowchartState.userAnswers.schools !== undefined) {
+        readinessData.schoolList.score = flowchartState.userAnswers.schools === 'no' ? 20 : 10;
+      }
+      totalScore += readinessData.schoolList.score * readinessData.schoolList.weight;
+      totalMaxScore += readinessData.schoolList.maxScore * readinessData.schoolList.weight;
+
+      if (flowchartState.userAnswers.household !== undefined) {
+        readinessData.householdInfo.score = flowchartState.userAnswers.household === 'no' ? 20 : 10;
+      }
+      totalScore += readinessData.householdInfo.score * readinessData.householdInfo.weight;
+      totalMaxScore += readinessData.householdInfo.maxScore * readinessData.householdInfo.weight;
+
+      const percentage = Math.round((totalScore / totalMaxScore) * 100);
+
+      displayReadinessScore(percentage, readinessData);
+    }
+
+    function displayReadinessScore(percentage, readinessData) {
+      const scoreElement = document.getElementById('readinessScore');
+      const scoreNumber = document.getElementById('scoreNumber');
+      const scoreCircle = document.getElementById('scoreCircle');
+      const scoreTitle = document.getElementById('scoreTitle');
+      const scoreDescription = document.getElementById('scoreDescription');
+      const scoreBreakdown = document.getElementById('scoreBreakdown');
+      const reviewChecklistItems = document.getElementById('reviewChecklistItems');
+      const recommendationsList = document.getElementById('recommendationsList');
+
+      if (!scoreElement) return;
+
+      // Update score display
+      scoreNumber.textContent = percentage;
+
+      // Determine score category
+      let category, description, circleClass;
+      if (percentage >= 90) {
+        category = 'Excellent';
+        description = 'You\'re fully prepared for FAFSA submission!';
+        circleClass = 'excellent';
+      } else if (percentage >= 75) {
+        category = 'Good';
+        description = 'You\'re well-prepared with minor areas to address.';
+        circleClass = 'good';
+      } else if (percentage >= 60) {
+        category = 'Fair';
+        description = 'You\'re making good progress but have some important areas to complete.';
+        circleClass = 'fair';
+      } else {
+        category = 'Needs Work';
+        description = 'Focus on completing the essential steps to improve your readiness.';
+        circleClass = 'needs-work';
+      }
+
+      scoreTitle.textContent = category;
+      scoreDescription.textContent = description;
+      scoreCircle.className = `score-circle ${circleClass}`;
+
+      // Generate breakdown
+      scoreBreakdown.innerHTML = '';
+      const breakdownMap = {
+        personalInfo: 'Personal Information',
+        financialInfo: 'Financial Information',
+        signature: 'Signature',
+        schoolList: 'School List',
+        householdInfo: 'Household Information'
+      };
+
+      Object.keys(readinessData).forEach(key => {
+        const data = readinessData[key];
+        const itemPercentage = Math.round((data.score / data.maxScore) * 100);
+        const breakdownItem = document.createElement('div');
+        breakdownItem.className = 'breakdown-item';
+
+        breakdownItem.innerHTML = `
+          <h4>${breakdownMap[key]}</h4>
+          <div class="score-bar">
+            <div class="score-fill ${getScoreClass(itemPercentage)}" style="width: ${itemPercentage}%"></div>
+          </div>
+          <div class="score-value">${itemPercentage}% (${data.score}/${data.maxScore})</div>
+        `;
+        scoreBreakdown.appendChild(breakdownItem);
+      });
+
+      // Generate review checklist
+      reviewChecklistItems.innerHTML = '';
+      Object.keys(flowchartState.userAnswers).forEach(key => {
+        if (questionData[key]) {
+          const qData = questionData[key];
+          const answer = flowchartState.userAnswers[key];
+          const reviewItem = document.createElement('div');
+          reviewItem.className = 'review-item';
+
+          reviewItem.innerHTML = `
+            <div class="review-item-icon">${qData.icon}</div>
+            <div class="review-item-content">
+              <div class="review-item-question">${qData.question}</div>
+              <div class="review-item-answer ${answer}">${answer === 'yes' ? '✓ Yes' : '✗ No'}</div>
+              <div class="review-item-feedback">${qData.feedback[answer]}</div>
+            </div>
+          `;
+          reviewChecklistItems.appendChild(reviewItem);
+        }
+      });
+
+      // Generate recommendations
+      recommendationsList.innerHTML = '';
+      const recommendations = generateRecommendations(percentage, readinessData);
+      recommendations.forEach(rec => {
+        const recItem = document.createElement('div');
+        recItem.className = `recommendation-item ${rec.priority}`;
+        recItem.innerHTML = `
+          <div class="recommendation-icon">${rec.icon}</div>
+          <div class="recommendation-content">
+            <h4>${rec.title}</h4>
+            <p>${rec.description}</p>
+          </div>
+        `;
+        recommendationsList.appendChild(recItem);
+      });
+
+      // Show the score section
+      scoreElement.style.display = 'block';
+    }
+
+    function getScoreClass(percentage) {
+      if (percentage >= 90) return 'excellent';
+      if (percentage >= 75) return 'good';
+      if (percentage >= 60) return 'fair';
+      return 'needs-work';
+    }
+
+    function generateRecommendations(percentage, data) {
+      const recommendations = [];
+
+      if (percentage < 90) {
+        if (data.personalInfo.score < data.personalInfo.maxScore) {
+          recommendations.push({
+            priority: 'priority',
+            icon: '⚠️',
+            title: 'Double-Check Personal Information',
+            description: 'Verify that all personal details match official documents exactly.'
+          });
+        }
+
+        if (data.financialInfo.score < data.financialInfo.maxScore) {
+          recommendations.push({
+            priority: 'important',
+            icon: '💰',
+            title: 'Gather Financial Documents',
+            description: 'Collect tax returns, W-2s, and bank statements for accurate reporting.'
+          });
+        }
+
+        if (data.signature.score < data.signature.maxScore) {
+          recommendations.push({
+            priority: 'important',
+            icon: '✍️',
+            title: 'Complete Signature Requirements',
+            description: 'Both student and parent signatures are required for dependent students.'
+          });
+        }
+
+        if (data.schoolList.score < data.schoolList.maxScore) {
+          recommendations.push({
+            priority: 'important',
+            icon: '🎓',
+            title: 'Finalize School List',
+            description: 'Add all schools you\'re considering, even if you haven\'t applied yet.'
+          });
+        }
+
+        if (data.householdInfo.score < data.householdInfo.maxScore) {
+          recommendations.push({
+            priority: 'important',
+            icon: '👨‍👩‍👧‍👦',
+            title: 'Verify Household Information',
+            description: 'Ensure household size and dependency status are accurate.'
+          });
+        }
+      }
+
+      if (percentage >= 75) {
+        recommendations.push({
+          priority: 'suggestion',
+          icon: '✅',
+          title: 'You\'re Almost Ready!',
+          description: 'Complete the remaining steps and you\'ll be ready to submit your FAFSA.'
+        });
+      } else if (percentage >= 60) {
+        recommendations.push({
+          priority: 'important',
+          icon: '📋',
+          title: 'Create a Checklist',
+          description: 'Make a list of remaining tasks and set deadlines to stay on track.'
+        });
+      } else {
+        recommendations.push({
+          priority: 'priority',
+          icon: '🚨',
+          title: 'Start with Basics',
+          description: 'Focus on completing personal and financial information first.'
+        });
+      }
+
+      return recommendations;
+    }
+
+    // ========================================
+    // PDF DOWNLOAD FUNCTIONALITY
+    // ========================================
+
+    // Helper function to remove all emojis from text
+    function removeEmojis(text) {
+      if (!text) return '';
+
+      // Comprehensive emoji removal regex
+      // Covers all Unicode emoji ranges including:
+      // - Basic emojis
+      // - Emoticons
+      // - Transport and map symbols
+      // - Flags
+      // - Pictographs
+      // - Variation selectors
+      // - Zero-width joiners (for compound emojis like family)
+      return text.replace(/[\u{1F600}-\u{1F64F}]/gu, '') // Emoticons
+                 .replace(/[\u{1F300}-\u{1F5FF}]/gu, '') // Misc Symbols and Pictographs
+                 .replace(/[\u{1F680}-\u{1F6FF}]/gu, '') // Transport and Map
+                 .replace(/[\u{1F1E0}-\u{1F1FF}]/gu, '') // Flags
+                 .replace(/[\u{2600}-\u{26FF}]/gu, '')   // Misc symbols
+                 .replace(/[\u{2700}-\u{27BF}]/gu, '')   // Dingbats
+                 .replace(/[\u{1F900}-\u{1F9FF}]/gu, '') // Supplemental Symbols and Pictographs
+                 .replace(/[\u{1FA00}-\u{1FA6F}]/gu, '') // Chess Symbols
+                 .replace(/[\u{1FA70}-\u{1FAFF}]/gu, '') // Symbols and Pictographs Extended-A
+                 .replace(/[\u{FE00}-\u{FE0F}]/gu, '')   // Variation selectors
+                 .replace(/[\u{200D}]/gu, '')            // Zero-width joiner
+                 .replace(/[\u{E0020}-\u{E007F}]/gu, '') // Tag characters
+                 .replace(/[\u{1F000}-\u{1F02F}]/gu, '') // Mahjong Tiles
+                 .replace(/[\u{1F0A0}-\u{1F0FF}]/gu, '') // Playing Cards
+                 .replace(/[\u{1F100}-\u{1F64F}]/gu, '') // Enclosed characters
+                 .replace(/[\u{2300}-\u{23FF}]/gu, '')   // Miscellaneous Technical
+                 .replace(/[\u{2B50}]/gu, '')            // Star
+                 .replace(/[\u{1F170}-\u{1F251}]/gu, '') // Enclosed ideographic supplement
+                 .replace(/[\u{FE0E}\u{FE0F}]/gu, '')    // Variation selectors
+                 .replace(/[\u{231A}-\u{231B}]/gu, '')   // Watch/Hourglass
+                 .replace(/[\u{23E9}-\u{23F3}]/gu, '')   // Media controls
+                 .replace(/[\u{25FD}-\u{25FE}]/gu, '')   // Geometric shapes
+                 .replace(/[\u{2614}-\u{2615}]/gu, '')   // Umbrella/Hot beverage
+                 .replace(/[\u{2648}-\u{2653}]/gu, '')   // Zodiac
+                 .replace(/[\u{267F}]/gu, '')            // Wheelchair
+                 .replace(/[\u{2693}]/gu, '')            // Anchor
+                 .replace(/[\u{26A1}]/gu, '')            // High voltage
+                 .replace(/[\u{26AA}-\u{26AB}]/gu, '')   // Circles
+                 .replace(/[\u{26BD}-\u{26BE}]/gu, '')   // Soccer/Baseball
+                 .replace(/[\u{26C4}-\u{26C5}]/gu, '')   // Snowman/Sun
+                 .replace(/[\u{26CE}]/gu, '')            // Ophiuchus
+                 .replace(/[\u{26D4}]/gu, '')            // No Entry
+                 .replace(/[\u{26EA}]/gu, '')            // Church
+                 .replace(/[\u{26F2}-\u{26F3}]/gu, '')   // Fountain/Golf
+                 .replace(/[\u{26F5}]/gu, '')            // Sailboat
+                 .replace(/[\u{26FA}]/gu, '')            // Tent
+                 .replace(/[\u{26FD}]/gu, '')            // Fuel pump
+                 .replace(/[\u{2705}]/gu, '')            // Check mark button
+                 .replace(/[\u{270A}-\u{270B}]/gu, '')   // Fist/Hand
+                 .replace(/[\u{2728}]/gu, '')            // Sparkles
+                 .replace(/[\u{274C}]/gu, '')            // Cross mark
+                 .replace(/[\u{274E}]/gu, '')            // Cross mark button
+                 .replace(/[\u{2753}-\u{2755}]/gu, '')   // Question/Exclamation
+                 .replace(/[\u{2757}]/gu, '')            // Exclamation
+                 .replace(/[\u{2795}-\u{2797}]/gu, '')   // Plus/Minus/Division
+                 .replace(/[\u{27B0}]/gu, '')            // Loop
+                 .replace(/[\u{27BF}]/gu, '')            // Double loop
+                 .replace(/[\u{2B1B}-\u{2B1C}]/gu, '')   // Squares
+                 .trim();
+    }
+
+    async function downloadPDF() {
+      try {
+        // Wait for jsPDF to load
+        if (typeof window.jspdf === 'undefined') {
+          alert('PDF library is still loading. Please try again in a moment.');
+          return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // MCF Brand Colors
+        const mcfBlue = [1, 38, 153];
+        const mcfGreen = [38, 224, 17];
+        const darkGray = [50, 50, 50];
+        const lightGray = [100, 100, 100];
+
+        // Header
+        doc.setFillColor(mcfBlue[0], mcfBlue[1], mcfBlue[2]);
+        doc.rect(0, 0, 210, 30, 'F');
+
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(20);
+        doc.setFont('helvetica', 'bold');
+        doc.text('MY COLLEGE FINANCE', 105, 12, { align: 'center' });
+
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'normal');
+        doc.text('FAFSA Corrections Troubleshooting Report', 105, 20, { align: 'center' });
+
+        let yPos = 40;
+
+        // Date
+        doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
+        doc.setFontSize(10);
+        const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        doc.text(`Generated: ${today}`, 20, yPos);
+        yPos += 15;
+
+        // Score Section
+        doc.setFontSize(16);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(mcfBlue[0], mcfBlue[1], mcfBlue[2]);
+        doc.text('Your Readiness Score', 20, yPos);
+        yPos += 10;
+
+        const scoreNumber = document.getElementById('scoreNumber').textContent;
+        const scoreTitle = document.getElementById('scoreTitle').textContent;
+
+        doc.setFontSize(32);
+        doc.setFont('helvetica', 'bold');
+        doc.text(`${scoreNumber}%`, 20, yPos);
+
+        doc.setFontSize(14);
+        doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
+        doc.text(scoreTitle, 50, yPos);
+        yPos += 15;
+
+        // Your Answers Section
+        doc.setFontSize(14);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(mcfBlue[0], mcfBlue[1], mcfBlue[2]);
+        doc.text('Your Answers Review', 20, yPos);
+        yPos += 8;
+
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
+
+        Object.keys(flowchartState.userAnswers).forEach(key => {
+          if (questionData[key]) {
+            const qData = questionData[key];
+            const answer = flowchartState.userAnswers[key];
+
+            // Check if we need a new page
+            if (yPos > 270) {
+              doc.addPage();
+              yPos = 20;
+            }
+
+            // Question (remove emojis)
+            doc.setFont('helvetica', 'bold');
+            doc.text(removeEmojis(qData.question), 20, yPos);
+            yPos += 6;
+
+            // Answer (use text instead of emoji symbols)
+            doc.setFont('helvetica', 'normal');
+            if (answer === 'yes') {
+              doc.setTextColor(22, 163, 74); // Green
+              doc.text('YES', 25, yPos);
+            } else {
+              doc.setTextColor(mcfBlue[0], mcfBlue[1], mcfBlue[2]);
+              doc.text('NO', 25, yPos);
+            }
+            yPos += 6;
+
+            // Feedback (remove emojis)
+            doc.setTextColor(lightGray[0], lightGray[1], lightGray[2]);
+            const feedbackLines = doc.splitTextToSize(removeEmojis(qData.feedback[answer]), 170);
+            doc.text(feedbackLines, 25, yPos);
+            yPos += (feedbackLines.length * 5) + 5;
+          }
+        });
+
+        // Recommendations Section
+        yPos += 5;
+        if (yPos > 250) {
+          doc.addPage();
+          yPos = 20;
+        }
+
+        doc.setFontSize(14);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(mcfBlue[0], mcfBlue[1], mcfBlue[2]);
+        doc.text('Recommendations', 20, yPos);
+        yPos += 8;
+
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+
+        const scoreNumber2 = parseInt(document.getElementById('scoreNumber').textContent);
+        const readinessData = {
+          personalInfo: { score: 0, maxScore: 20 },
+          financialInfo: { score: 0, maxScore: 25 },
+          signature: { score: 0, maxScore: 15 },
+          schoolList: { score: 0, maxScore: 20 },
+          householdInfo: { score: 0, maxScore: 20 }
+        };
+
+        const recommendations = generateRecommendations(scoreNumber2, readinessData);
+
+        recommendations.forEach(rec => {
+          if (yPos > 270) {
+            doc.addPage();
+            yPos = 20;
+          }
+
+          doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
+          doc.setFont('helvetica', 'bold');
+          doc.text(removeEmojis(rec.title), 20, yPos);
+          yPos += 6;
+
+          doc.setFont('helvetica', 'normal');
+          doc.setTextColor(lightGray[0], lightGray[1], lightGray[2]);
+          const descLines = doc.splitTextToSize(removeEmojis(rec.description), 170);
+          doc.text(descLines, 25, yPos);
+          yPos += (descLines.length * 5) + 8;
+        });
+
+        // Footer on last page
+        const pageCount = doc.internal.getNumberOfPages();
+        for (let i = 1; i <= pageCount; i++) {
+          doc.setPage(i);
+          doc.setFontSize(8);
+          doc.setTextColor(lightGray[0], lightGray[1], lightGray[2]);
+          doc.text('My College Finance - EDUCATE • MOTIVATE • ELEVATE', 105, 290, { align: 'center' });
+          doc.text(`Page ${i} of ${pageCount}`, 195, 290, { align: 'right' });
+        }
+
+        // Save the PDF
+        doc.save('FAFSA-Corrections-Report.pdf');
+
+      } catch (error) {
+        console.error('Error generating PDF:', error);
+        alert('There was an error generating the PDF. Please try again or take a screenshot of your results.');
+      }
+    }
+
+    // ========================================
+    // EVENT DELEGATION FOR BUTTONS
+    // ========================================
+    document.addEventListener('click', (event) => {
+      const button = event.target.closest('.action-btn');
+      if (button && button.dataset.step && button.dataset.answer) {
+        handleButtonClick(event);
+      }
+    });
+
+    // ========================================
+    // KEYBOARD NAVIGATION
+    // ========================================
+    document.addEventListener('keydown', (e) => {
+      const activeStep = document.querySelector('.flowchart-step.active');
+      if (!activeStep) return;
+
+      const yesBtn = activeStep.querySelector('[data-answer="yes"]');
+      const noBtn = activeStep.querySelector('[data-answer="no"]');
+
+      // Y for Yes, N for No
+      if (e.key.toLowerCase() === 'y' && yesBtn) {
+        e.preventDefault();
+        yesBtn.click();
+      } else if (e.key.toLowerCase() === 'n' && noBtn) {
+        e.preventDefault();
+        noBtn.click();
+      }
+    });
+
+    // ========================================
+    // SMART STICKY HEADER (NEW)
+    // Hide-on-scroll-down, show-on-scroll-up behavior
+    // ========================================
+    let lastScrollTop = 0;
+    const header = document.querySelector('.mcf-header');
+
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+      if (scrollTop > lastScrollTop && scrollTop > 80) {
+        // Scrolling down - hide header
+        header.classList.add('header-hidden');
+      } else {
+        // Scrolling up - show header
+        header.classList.remove('header-hidden');
+      }
+
+      lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+    }, { passive: true });
+
+    // ========================================
+    // ========================================
+    // PDF PRINT HANDLER (ENHANCED WITH EMOJI REPLACEMENT)
+    // CRITICAL: This is the ONLY way to remove weird symbols from PDF
+    // ========================================
+    window.addEventListener('beforeprint', () => {
+      // Set PDF document title
+      const pageTitle = document.querySelector('.page-title h1');
+      if (pageTitle) {
+        document.title = 'MCF - ' + pageTitle.textContent.trim();
+      }
+
+      // Force light mode for print (CSS handles most of this)
+      const body = document.body;
+      if (body.classList.contains('dark-mode')) {
+        body.setAttribute('data-print-dark-mode', 'true');
+      }
+
+      // ========================================
+      // CRITICAL: EMOJI REPLACEMENT USING TREEWALKER
+      // CSS cannot remove HTML text content - must use JavaScript
+      // ========================================
+
+      // Get all text nodes in the document
+      const walker = document.createTreeWalker(
+        document.body,
+        NodeFilter.SHOW_TEXT,
+        null,
+        false
+      );
+
+      const textNodes = [];
+      while(walker.nextNode()) {
+        textNodes.push(walker.currentNode);
+      }
+
+      // Replace ALL emojis in all text nodes using comprehensive regex
+      textNodes.forEach(node => {
+        let text = node.nodeValue;
+        if (!text) return;
+
+        // Use the same removeEmojis function for consistency
+        // But preserve some basic text symbols
+        const cleaned = text
+          // Remove all emoji ranges
+          .replace(/[\u{1F600}-\u{1F64F}]/gu, '') // Emoticons
+          .replace(/[\u{1F300}-\u{1F5FF}]/gu, '') // Misc Symbols and Pictographs
+          .replace(/[\u{1F680}-\u{1F6FF}]/gu, '') // Transport and Map
+          .replace(/[\u{1F1E0}-\u{1F1FF}]/gu, '') // Flags
+          .replace(/[\u{2600}-\u{26FF}]/gu, '')   // Misc symbols (includes ✓ and ✗)
+          .replace(/[\u{2700}-\u{27BF}]/gu, '')   // Dingbats
+          .replace(/[\u{1F900}-\u{1F9FF}]/gu, '') // Supplemental Symbols and Pictographs
+          .replace(/[\u{1FA00}-\u{1FA6F}]/gu, '') // Chess Symbols
+          .replace(/[\u{1FA70}-\u{1FAFF}]/gu, '') // Symbols and Pictographs Extended-A
+          .replace(/[\u{FE00}-\u{FE0F}]/gu, '')   // Variation selectors
+          .replace(/[\u{200D}]/gu, '')            // Zero-width joiner (critical for family emoji)
+          .replace(/[\u{E0020}-\u{E007F}]/gu, '') // Tag characters
+          .replace(/[\u{1F000}-\u{1F02F}]/gu, '') // Mahjong Tiles
+          .replace(/[\u{1F0A0}-\u{1F0FF}]/gu, '') // Playing Cards
+          .replace(/[\u{1F100}-\u{1F64F}]/gu, '') // Enclosed characters
+          .replace(/[\u{2300}-\u{23FF}]/gu, '')   // Miscellaneous Technical
+          .replace(/[\u{2B50}]/gu, '')            // Star
+          .replace(/[\u{1F170}-\u{1F251}]/gu, '') // Enclosed ideographic supplement
+          .replace(/[\u{231A}-\u{231B}]/gu, '')   // Watch/Hourglass
+          .replace(/[\u{23E9}-\u{23F3}]/gu, '')   // Media controls
+          .replace(/[\u{25FD}-\u{25FE}]/gu, '')   // Geometric shapes
+          .replace(/[\u{2614}-\u{2615}]/gu, '')   // Umbrella/Hot beverage
+          .replace(/[\u{2648}-\u{2653}]/gu, '')   // Zodiac
+          .replace(/[\u{267F}]/gu, '')            // Wheelchair
+          .replace(/[\u{2693}]/gu, '')            // Anchor
+          .replace(/[\u{26A1}]/gu, '')            // High voltage
+          .replace(/[\u{26AA}-\u{26AB}]/gu, '')   // Circles
+          .replace(/[\u{26BD}-\u{26BE}]/gu, '')   // Soccer/Baseball
+          .replace(/[\u{26C4}-\u{26C5}]/gu, '')   // Snowman/Sun
+          .replace(/[\u{26CE}]/gu, '')            // Ophiuchus
+          .replace(/[\u{26D4}]/gu, '')            // No Entry
+          .replace(/[\u{26EA}]/gu, '')            // Church
+          .replace(/[\u{26F2}-\u{26F3}]/gu, '')   // Fountain/Golf
+          .replace(/[\u{26F5}]/gu, '')            // Sailboat
+          .replace(/[\u{26FA}]/gu, '')            // Tent
+          .replace(/[\u{26FD}]/gu, '')            // Fuel pump
+          .replace(/[\u{2705}]/gu, '')            // Check mark button
+          .replace(/[\u{270A}-\u{270B}]/gu, '')   // Fist/Hand
+          .replace(/[\u{2728}]/gu, '')            // Sparkles
+          .replace(/[\u{274C}]/gu, '')            // Cross mark
+          .replace(/[\u{274E}]/gu, '')            // Cross mark button
+          .replace(/[\u{2753}-\u{2755}]/gu, '')   // Question/Exclamation
+          .replace(/[\u{2757}]/gu, '')            // Exclamation
+          .replace(/[\u{2795}-\u{2797}]/gu, '')   // Plus/Minus/Division
+          .replace(/[\u{27B0}]/gu, '')            // Loop
+          .replace(/[\u{27BF}]/gu, '')            // Double loop
+          .replace(/[\u{2B1B}-\u{2B1C}]/gu, '')   // Squares
+          // Clean up extra spaces
+          .replace(/\s+/g, ' ')
+          .trim();
+
+        node.nodeValue = cleaned;
+      });
+
+      // Hide all emoji-only icon elements
+      document.querySelectorAll('.step-icon, .emoji, [role="img"]').forEach(el => {
+        el.style.display = 'none';
+      });
+
+      // ========================================
+      // ADD PRINT-ONLY HEADER (Troubleshooting Report)
+      // ========================================
+      const existingPrintHeader = document.querySelector('.print-only-header');
+      if (!existingPrintHeader) {
+        const printHeader = document.createElement('div');
+        printHeader.className = 'print-only-header';
+        printHeader.innerHTML = `
+          <div style="text-align: center; margin-bottom: 2rem; page-break-after: avoid;">
+            <h1 style="font-size: 24pt; color: #012699; margin-bottom: 0.5rem; font-weight: 900;">MY COLLEGE FINANCE</h1>
+            <p style="font-size: 14pt; color: #333; margin-bottom: 0.5rem; font-weight: 700;">FAFSA Corrections Troubleshooting Report</p>
+            <p style="font-size: 10pt; color: #666; margin: 0;">Generated: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+          </div>
+        `;
+        document.body.insertBefore(printHeader, document.body.firstChild);
+      }
+
+      // ========================================
+      // SHOW ALL FLOWCHART STEPS (Not just active)
+      // Organize as sequential troubleshooting guide
+      // ========================================
+      const allSteps = document.querySelectorAll('.flowchart-step');
+      allSteps.forEach((step, index) => {
+        step.style.display = 'block';
+
+        // Add step numbers for clarity in PDF
+        const stepContent = step.querySelector('.step-content');
+        if (stepContent && !step.querySelector('.print-step-number')) {
+          const stepNumber = document.createElement('div');
+          stepNumber.className = 'print-step-number';
+          stepNumber.style.cssText = 'font-size: 10pt; color: #666; font-weight: 600; margin-bottom: 0.5rem;';
+          stepNumber.textContent = `Step ${index + 1}`;
+          stepContent.insertBefore(stepNumber, stepContent.firstChild);
+        }
+      });
+
+      // Log print event
+      console.log('PDF generation started - All emojis removed using comprehensive Unicode regex via TreeWalker');
+    });
+
+    window.addEventListener('afterprint', () => {
+      // Remove print-only header
+      const printHeader = document.querySelector('.print-only-header');
+      if (printHeader) {
+        printHeader.remove();
+      }
+
+      // Remove print step numbers
+      document.querySelectorAll('.print-step-number').forEach(el => el.remove());
+
+      // Restore dark mode if it was active
+      const body = document.body;
+      if (body.hasAttribute('data-print-dark-mode')) {
+        body.removeAttribute('data-print-dark-mode');
+      }
+
+      // Restore interactive state (hide non-active steps)
+      const allSteps = document.querySelectorAll('.flowchart-step');
+      allSteps.forEach(step => {
+        if (!step.classList.contains('active')) {
+          step.style.display = 'none';
+        }
+      });
+
+      // Restore step icons
+      document.querySelectorAll('.step-icon').forEach(el => {
+        el.style.display = '';
+      });
+
+      // Reload page to restore emojis (since we modified text nodes)
+      // Note: This will reset the flowchart state
+      console.log('PDF generation complete - Reloading to restore original content');
+      window.location.reload();
+    });
+
+    // ========================================
+    // INITIALIZATION
+    // ========================================
+    document.addEventListener('DOMContentLoaded', () => {
+      initDarkMode();
+      checkForCompletedFlowchart(); // Check if user has already completed the flowchart
+    });
+  </script>
+</body>
+</html>
