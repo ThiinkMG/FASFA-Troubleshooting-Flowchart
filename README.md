@@ -1,4 +1,14 @@
-# FAFSA Corrections Troubleshooting Flowchart
+# 📚 FASFA Troubleshooting Flowchart
+
+**An Interactive Learning Tool**
+
+[![Version](https://img.shields.io/badge/version-1.0-blue.svg)](https://github.com/ThiinkMG/fafsa-worksheet)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Status](https://img.shields.io/badge/status-production-brightgreen.svg)](https://github.com/ThiinkMG/fafsa-worksheet)
+
+---
+
+# FASFA Troubleshooting Flowchart
 
 An interactive educational tool designed to help students identify and resolve FAFSA correction issues through a step-by-step guided troubleshooting process with personalized feedback and actionable solutions.
 
