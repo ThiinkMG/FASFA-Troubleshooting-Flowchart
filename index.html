@@ -302,6 +302,31 @@
       min-height: calc(100vh - 200px);
     }
 
+    /* Embedded mode: reduce spacers to prevent oversized host iframes */
+    body.embedded {
+      overflow-x: hidden;
+      overflow-y: auto;
+      max-height: 100vh; /* Critical: prevent infinite vertical expansion */
+    }
+
+    body.embedded .main-content {
+      min-height: auto !important;
+      max-height: none !important;
+      padding-bottom: 1.5rem !important;
+    }
+
+    body.embedded .mcf-footer {
+      margin-top: 1.5rem !important;
+      padding: 1.5rem 0 !important;
+    }
+
+    /* CRITICAL FIX: Prevent body from expanding infinitely in iframes */
+    body.embedded,
+    body.embedded html {
+      height: auto !important;
+      min-height: 0 !important;
+    }
+
     .page-title {
       text-align: center;
       margin-bottom: 1rem;
@@ -2832,6 +2857,153 @@
     }
 
     // ========================================
+    // IFRAME AUTO-RESIZE SUPPORT
+    // Sends height to parent so iframe can auto-fit
+    // ========================================
+    const MAX_IFRAME_HEIGHT = 10000; // Failsafe: prevent infinite growth
+    let heightUpdateCount = 0;
+    let lastSentHeight = 0;
+
+    function updateIframeHeight() {
+      try {
+        const height = Math.max(
+          document.documentElement.scrollHeight,
+          document.body ? document.body.scrollHeight : 0
+        );
+
+        // Failsafe: cap at reasonable maximum
+        const cappedHeight = Math.min(height, MAX_IFRAME_HEIGHT);
+
+        // Prevent sending same height repeatedly
+        if (Math.abs(cappedHeight - lastSentHeight) < 5) {
+          return;
+        }
+
+        // Detect runaway loop: if height updates too frequently, stop
+        heightUpdateCount++;
+        if (heightUpdateCount > 50) {
+          console.warn('MCF: Height update loop detected, pausing updates');
+          setTimeout(() => { heightUpdateCount = 0; }, 5000);
+          return;
+        }
+
+        lastSentHeight = cappedHeight;
+
+        // Notify parent to resize iframe
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage({ type: 'mcf-iframe-height', height: cappedHeight }, '*');
+        }
+      } catch (e) {
+        // no-op if cross-origin or parent not available
+      }
+    }
+
+    // Reset counter periodically
+    setInterval(() => {
+      heightUpdateCount = Math.max(0, heightUpdateCount - 10);
+    }, 1000);
+
+    // Detect if page is embedded and adjust layout to avoid huge heights
+    function enableEmbedModeIfNeeded() {
+      let embedded = false;
+      try { embedded = window.self !== window.top; } catch (_) { embedded = true; }
+      if (embedded) {
+        document.body.classList.add('embedded');
+        // One more height sync after class is applied
+        setTimeout(updateIframeHeight, 0);
+      }
+    }
+
+    // Observe DOM changes and resize (debounced with stabilization check)
+    (function initIframeAutoResizeObserver() {
+      let resizeQueued = false;
+      let lastHeight = 0;
+      let stableCount = 0;
+      const STABILITY_THRESHOLD = 3; // Must stabilize before stopping
+      const HEIGHT_CHANGE_THRESHOLD = 10; // Minimum px change to trigger update
+
+      const queueResize = () => {
+        if (resizeQueued) return;
+        resizeQueued = true;
+        requestAnimationFrame(() => {
+          resizeQueued = false;
+          const currentHeight = Math.max(
+            document.documentElement.scrollHeight,
+            document.body ? document.body.scrollHeight : 0
+          );
+
+          // Only update if height changed significantly
+          if (Math.abs(currentHeight - lastHeight) > HEIGHT_CHANGE_THRESHOLD) {
+            lastHeight = currentHeight;
+            stableCount = 0;
+            updateIframeHeight();
+          } else {
+            stableCount++;
+            // Stop observing after height stabilizes
+            if (stableCount >= STABILITY_THRESHOLD) {
+              disconnectObservers();
+            }
+          }
+        });
+      };
+
+      let mutationObserver = null;
+      let resizeObserver = null;
+
+      const disconnectObservers = () => {
+        if (mutationObserver) {
+          mutationObserver.disconnect();
+          mutationObserver = null;
+        }
+        if (resizeObserver) {
+          resizeObserver.disconnect();
+          resizeObserver = null;
+        }
+      };
+
+      // MutationObserver for content changes (less aggressive)
+      try {
+        mutationObserver = new MutationObserver(queueResize);
+        mutationObserver.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+          attributes: false, // Reduced: Don't watch attribute changes
+          characterData: false // Reduced: Don't watch text changes
+        });
+      } catch (_) {}
+
+      // ResizeObserver for layout changes
+      try {
+        resizeObserver = new ResizeObserver(queueResize);
+        resizeObserver.observe(document.body);
+      } catch (_) {}
+
+      // Window resize - keep this for legitimate viewport changes
+      window.addEventListener('resize', queueResize, { passive: true });
+
+      // Initial send after content is ready
+      if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        setTimeout(updateIframeHeight, 0);
+      } else {
+        document.addEventListener('DOMContentLoaded', () => setTimeout(updateIframeHeight, 0));
+      }
+
+      // Re-enable observers when navigating (for legitimate content changes)
+      window.addEventListener('mcf-navigate', () => {
+        stableCount = 0;
+        if (!mutationObserver) {
+          try {
+            mutationObserver = new MutationObserver(queueResize);
+            mutationObserver.observe(document.documentElement, {
+              childList: true,
+              subtree: true
+            });
+          } catch (_) {}
+        }
+      });
+    })();
+
+    // ========================================
     // FLOWCHART NAVIGATION
     // ========================================
     function startFlowchart() {
@@ -2852,6 +3024,12 @@
 
         // Scroll to step
         targetStep.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        // Dispatch navigation event to re-enable observers
+        window.dispatchEvent(new Event('mcf-navigate'));
+
+        // Inform parent iframe of new height after DOM updates
+        setTimeout(updateIframeHeight, 50);
       }
     }
 
@@ -2889,6 +3067,8 @@
             hour: '2-digit',
             minute: '2-digit'
           });
+          // Update iframe height after swapping views
+          setTimeout(updateIframeHeight, 0);
         }
       }
     }
@@ -3102,6 +3282,8 @@
         if (scoreElement) {
           scoreElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
+        // Height may change after score renders
+        updateIframeHeight();
       }, 500);
     }
 
@@ -3316,6 +3498,8 @@
 
       // Show the score section
       scoreElement.style.display = 'block';
+      // Ensure parent resizes to include score
+      setTimeout(updateIframeHeight, 0);
     }
 
     function getScoreClass(percentage) {
@@ -3873,6 +4057,9 @@
     document.addEventListener('DOMContentLoaded', () => {
       initDarkMode();
       checkForCompletedFlowchart(); // Check if user has already completed the flowchart
+      // Initial height sync
+      enableEmbedModeIfNeeded();
+      updateIframeHeight();
     });
   </script>
 </body>
